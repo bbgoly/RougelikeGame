@@ -46,7 +46,7 @@ public class AudioManager : MonoBehaviour
 
     private void Start()
     {
-        //PlayAudio("Test");
+        PlayAudio("Test");
     }
 
     public Audio PlayAudio(string audioName)

@@ -36,11 +36,9 @@ public class Player : MonoBehaviour
     
     private float inputX;
     private Vector2 mouseDirection;
-    private WaitForSeconds wait;
     
     private void Start()
     {
-	wait = new WaitForSeconds(1f);
         rb = GetComponent<Rigidbody2D>();
         remainingJumps = maxJumps;
         isJumping = false;
@@ -94,20 +92,20 @@ public class Player : MonoBehaviour
 
     public IEnumerator jumpWait()
     {
-        yield return wait * jumpCooldown;
+        yield return new WaitForSeconds(jumpCooldown);
         isJumping = false;
     }
 
     public IEnumerator dashWait()
     {
-        yield return wait * dashCooldown;
+        yield return new WaitForSeconds(dashCooldown);
         rb.gravityScale = 3;
         isTeleportingOrDashing = false;
     }
 
     public IEnumerator teleportDashWait()
     {
-        yield return wait * teleportCooldown;
+        yield return new WaitForSeconds(teleportCooldown);
         rb.gravityScale = 3;
         isTeleportingOrDashing = false;
     }

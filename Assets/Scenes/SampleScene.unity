@@ -184,7 +184,7 @@ MonoBehaviour:
     audioSource: {fileID: 0}
     audioClip: {fileID: 8300000, guid: 247e68ff6dc50204bb1b8190c45413a5, type: 3}
     isLooped: 1
-    audioVolume: 1
+    audioVolume: 0.518
     audioPitch: 1
 --- !u!4 &240246882
 Transform:
