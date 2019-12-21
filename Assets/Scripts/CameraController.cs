@@ -9,20 +9,27 @@ public class CameraController : MonoBehaviour
 
     private bool lockedCam = true;
     private Vector3 currentVelocity;
+    private Vector3 mousePos;
 
     private void Start()
     {
-        lockedCam = true;
         currentVelocity = target.GetComponent<Rigidbody2D>().velocity;
         transform.position = target.transform.position;
+        lockedCam = true;
     }
 
-    private void FixedUpdate()
+    private void Update()
     {
         if (Input.GetKeyDown(KeyCode.LeftControl))
         {
             lockedCam = !lockedCam;
         }
-        transform.position = Vector3.SmoothDamp(transform.position, (lockedCam ? target.transform.position : Camera.main.ScreenToWorldPoint(Input.mousePosition)) + offset, ref currentVelocity, smoothSpeed * Time.fixedDeltaTime, lockedCam ? Mathf.Infinity : maxUnlockedSpeed, Time.fixedDeltaTime);
+        mousePos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+        offset = lockedCam ? new Vector3(-0.2f * Mathf.Sign(target.transform.position.x - mousePos.x), -0.2f * Mathf.Sign(target.transform.position.y - mousePos.y), offset.z) : Vector3.zero;
+    }
+
+    private void FixedUpdate()
+    {
+        transform.position = Vector3.SmoothDamp(transform.position, (lockedCam ? target.transform.position : mousePos) + offset, ref currentVelocity, smoothSpeed * Time.fixedDeltaTime, lockedCam ? Mathf.Infinity : maxUnlockedSpeed, Time.fixedDeltaTime);
     }
 }

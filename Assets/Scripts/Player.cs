@@ -82,7 +82,7 @@ public class Player : MonoBehaviour
         }
         else if (rb.velocity.y > 0 && !Input.GetButton("Jump"))
         {
-            rb.velocity -= Vector2.up * Physics2D.gravity.y * lowJumpMultiplier * Time.fixedDeltaTime; //Or Vector2.down
+            rb.velocity -= Vector2.down * Physics2D.gravity.y * lowJumpMultiplier * Time.fixedDeltaTime;
         }
         else if (rb.velocity.y < 0)
         {
