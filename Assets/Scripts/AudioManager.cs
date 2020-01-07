@@ -1,7 +1,5 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.Audio;
 
 [System.Serializable]
 public class Audio
@@ -22,7 +20,7 @@ public class Audio
 
 public class AudioManager : MonoBehaviour
 {
-    public List<Audio> audioList;
+    public static List<Audio> audioList;
     public static AudioManager audioManager;
 
     private void Awake()
@@ -33,7 +31,7 @@ public class AudioManager : MonoBehaviour
         }
         audioManager = this;
         DontDestroyOnLoad(gameObject);
-
+        
         foreach (Audio audio in audioList)
         {
             audio.audioSource = gameObject.AddComponent<AudioSource>();
@@ -44,19 +42,12 @@ public class AudioManager : MonoBehaviour
         }
     }
 
-    private void Start()
+    public static void PlayAudio(string audioName)
     {
-        //PlayAudio("Test");
+        audioList.Find(currentAudio => currentAudio.audioName == audioName).audioSource.Play();
     }
 
-    public Audio PlayAudio(string audioName)
-    {
-        Audio audio = audioList.Find(currentAudio => currentAudio.audioName == audioName);
-        audio.audioSource.Play();
-        return audio;
-    }
-
-    public void StopAudio(string audioName)
+    public static void StopAudio(string audioName)
     {
         audioList.Find(currentAudio => currentAudio.audioName == audioName).audioSource.Stop();
     }
