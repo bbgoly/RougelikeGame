@@ -17,21 +17,12 @@ public class Audio
     public float audioPitch;
 }
 
-
 public class AudioManager : MonoBehaviour
 {
-    public static List<Audio> audioList;
-    public static AudioManager audioManager;
+    public List<Audio> audioList;
 
     private void Awake()
     {
-        if(audioManager)
-        {
-            Destroy(gameObject);
-        }
-        audioManager = this;
-        DontDestroyOnLoad(gameObject);
-        
         foreach (Audio audio in audioList)
         {
             audio.audioSource = gameObject.AddComponent<AudioSource>();
@@ -42,13 +33,27 @@ public class AudioManager : MonoBehaviour
         }
     }
 
-    public static void PlayAudio(string audioName)
+    public static Audio PlayAudio(string audioName, float startTime = 0)
     {
-        audioList.Find(currentAudio => currentAudio.audioName == audioName).audioSource.Play();
+        Audio audio = GameObject.FindGameObjectWithTag("AudioManager").GetComponent<AudioManager>().audioList.Find(targetAudio => targetAudio.audioName == audioName);
+        audio.audioSource.time = startTime;
+        audio.audioSource.Play();
+        Debug.Log("playing");
+        return audio;
     }
 
     public static void StopAudio(string audioName)
     {
-        audioList.Find(currentAudio => currentAudio.audioName == audioName).audioSource.Stop();
+        GameObject.FindGameObjectWithTag("AudioManager").GetComponent<AudioManager>().audioList.Find(targetAudio => targetAudio.audioName == audioName).audioSource.Stop();
     }
 }
+
+/*
+public static AudioManager audioManager;
+if(audioManager)
+{
+    Destroy(gameObject);
+}
+audioManager = this;
+DontDestroyOnLoad(gameObject);
+*/

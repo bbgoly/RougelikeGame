@@ -6,7 +6,6 @@ public class TimeManager : MonoBehaviour
 {
     private Rigidbody2D rb2D;
     private ObjectInfo objectInfo;
-    private int timesRecorded = 0;
     private bool isRewinding = false;
 
     public static Stack<ObjectInfo> objectsToRewind;
@@ -31,13 +30,13 @@ public class TimeManager : MonoBehaviour
 
     void FixedUpdate()
     {
-        if (isRewinding && objectsToRewind.Count > 0)
+        if (Input.GetKeyUp(KeyCode.Return))
         {
-            if(timesRecorded > 0)
-            {
-                AudioManager.PlayAudio("RewindTime");
-                timesRecorded = 0;
-            }
+            objectsToRewind.Clear();
+            Time.timeScale = 1;
+        }
+        else if (isRewinding && objectsToRewind.Count > 0)
+        {
             objectInfo = objectsToRewind.Pop();
             transform.position = objectInfo.objectPosition;
             transform.rotation = objectInfo.objectRotation;
@@ -49,7 +48,6 @@ public class TimeManager : MonoBehaviour
         else if (objectsToRewind.Count == 0 || objectsToRewind.Peek().objectPosition != transform.position || objectsToRewind.Peek().objectRotation != transform.rotation || objectsToRewind.Peek().localScale != transform.localScale)
         {
             objectsToRewind.Push(new ObjectInfo(transform.position, transform.rotation, transform.localScale, rb2D.velocity, rb2D.angularVelocity));
-            timesRecorded++;
         }
     }
 
