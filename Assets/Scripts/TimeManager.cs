@@ -6,16 +6,11 @@ public class TimeManager : MonoBehaviour
 {
     private Rigidbody2D rb2D;
     private ObjectInfo objectInfo;
-    private bool isRewinding = false;
+    private static bool isRewinding = false;
 
-    public static Stack<ObjectInfo> objectsToRewind;
-
-    void Start()
-    {
-        rb2D = GetComponent<Rigidbody2D>();
-        objectsToRewind = new Stack<ObjectInfo>();
-    }
-
+    public static Dictionary<GameObject, Stack<ObjectInfo>> objectsToRewind = new Dictionary<GameObject, Stack<ObjectInfo>>();
+    
+    /*
     void Update()
     {
         isRewinding = Input.GetKey(KeyCode.Return);
@@ -26,16 +21,19 @@ public class TimeManager : MonoBehaviour
             ChangeTimeFlow(0.5f);
         else if (Input.GetKey(KeyCode.Q))
             ChangeTimeFlow(2, 0.1f);
+        if 
+    }
+    */
+    
+    void Start()
+    {
+        rb2D = GetComponent<Rigidbody2D>();
+        
     }
 
     void FixedUpdate()
     {
-        if (Input.GetKeyUp(KeyCode.Return))
-        {
-            objectsToRewind.Clear();
-            Time.timeScale = 1;
-        }
-        else if (isRewinding && objectsToRewind.Count > 0)
+        if (isRewinding && objectsToRewind.Count > 0)
         {
             objectInfo = objectsToRewind.Pop();
             transform.position = objectInfo.objectPosition;
@@ -45,6 +43,11 @@ public class TimeManager : MonoBehaviour
             rb2D.angularVelocity = objectInfo.angularVelocity;
             Time.timeScale = objectsToRewind.Count > 0 ? 3 : 1;
         }
+        else if (isRewinding && objectsToRewind.Count <= 0)
+        {
+            rb2D.interpolation = RigidbodyInterpolation2D.None;
+            isRewinding = false;
+        }
         else if (objectsToRewind.Count == 0 || objectsToRewind.Peek().objectPosition != transform.position || objectsToRewind.Peek().objectRotation != transform.rotation || objectsToRewind.Peek().localScale != transform.localScale)
         {
             objectsToRewind.Push(new ObjectInfo(transform.position, transform.rotation, transform.localScale, rb2D.velocity, rb2D.angularVelocity));
@@ -53,8 +56,6 @@ public class TimeManager : MonoBehaviour
 
     void ChangeTimeFlow(float endTime, float timeStep = -0.1f)
     {
-        Debug.Log(Time.timeScale);
-        Debug.Log(endTime);
         rb2D.interpolation = RigidbodyInterpolation2D.Interpolate;
         for (float i = Time.timeScale; i < endTime; i += timeStep)
         {
@@ -62,6 +63,19 @@ public class TimeManager : MonoBehaviour
             Time.fixedDeltaTime = 0.02f * Time.timeScale;
         }
         rb2D.interpolation = RigidbodyInterpolation2D.None;
+    }
+
+    public static void RewindTime()
+    {
+        //AudioManager.PlayAudio("RewindTime", 2.4f);
+        FindObjectOfType<Rigidbody2D>().interpolation = RigidbodyInterpolation2D.Interpolate;
+        isRewinding = true;
+    }
+
+    public static void StopRewinding()
+    {
+        FindObjectOfType<Rigidbody2D>().interpolation = RigidbodyInterpolation2D.None;
+        isRewinding = false;
     }
 }
 

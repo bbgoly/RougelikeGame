@@ -47,9 +47,12 @@ public class Player : MonoBehaviour
 
     void Update()
     {
-	inputX = Input.GetAxisRaw("Horizontal");
-	mouseDirection = transform.position - Camera.main.ScreenToWorldPoint(Input.mousePosition);
-	
+	    inputX = Input.GetAxisRaw("Horizontal");
+	    mouseDirection = transform.position - Camera.main.ScreenToWorldPoint(Input.mousePosition);
+        if (Input.GetKeyDown(KeyCode.Return))
+        {
+            TimeManager.RewindTime();
+        }
     }
 
     void FixedUpdate()

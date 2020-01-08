@@ -513,7 +513,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e97177cacdd00204d994178d1f42b48f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  enemyName: Nigger Man
+  enemyName: bruh
   maxHealth: 100
   currentHealth: 100
   deathEffect: {fileID: 9162854696483086870, guid: 706ea7cc9a26bca47a4b64bdda578faf,
@@ -526,7 +526,7 @@ Rigidbody2D:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 602524482}
-  m_BodyType: 0
+  m_BodyType: 1
   m_Simulated: 1
   m_UseFullKinematicContacts: 0
   m_UseAutoMass: 0
@@ -1322,13 +1322,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 49e37f961c3c2c14bbf109d7123ce2d1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  audioList:
-  - audioName: RewindTime
-    audioSource: {fileID: 0}
-    audioClip: {fileID: 8300000, guid: 99bad3d4ea06e524196ea0397d681076, type: 3}
-    isLooped: 0
-    audioVolume: 0.5
-    audioPitch: 1
+  audioList: []
 --- !u!4 &1444830568
 Transform:
   m_ObjectHideFlags: 0

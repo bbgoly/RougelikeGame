@@ -21,4 +21,9 @@ public class Enemy : MonoBehaviour
             Destroy(gameObject);
         }
     }
+
+    void FixedUpdate()
+    {
+        transform.position = new Vector3(Mathf.PingPong(Time.time, 3), transform.position.y);
+    }
 }

@@ -38,7 +38,6 @@ public class AudioManager : MonoBehaviour
         Audio audio = GameObject.FindGameObjectWithTag("AudioManager").GetComponent<AudioManager>().audioList.Find(targetAudio => targetAudio.audioName == audioName);
         audio.audioSource.time = startTime;
         audio.audioSource.Play();
-        Debug.Log("playing");
         return audio;
     }
 
