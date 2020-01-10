@@ -1,15 +1,18 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
+using System.Linq;
 
 public class TimeManager : MonoBehaviour
 {
     private Rigidbody2D rb2D;
     private ObjectInfo objectInfo;
     private static bool isRewinding = false;
+    private static bool isDone = false;
 
-    public static Dictionary<GameObject, Stack<ObjectInfo>> objectsToRewind = new Dictionary<GameObject, Stack<ObjectInfo>>();
-    
+    public static Dictionary<GameObject, Stack<ObjectInfo>> rewindObjects = new Dictionary<GameObject, Stack<ObjectInfo>>();
+
     /*
     void Update()
     {
@@ -24,58 +27,117 @@ public class TimeManager : MonoBehaviour
         if 
     }
     */
-    
-    void Start()
+    private void Awake()
     {
-        rb2D = GetComponent<Rigidbody2D>();
-        
+        rewindObjects.Clear();
+        foreach (GameObject gameObject in SceneManager.GetActiveScene().GetRootGameObjects())
+        {
+            if (gameObject.layer == 9 || gameObject.layer == 10)
+            {
+                rewindObjects.Add(gameObject, new Stack<ObjectInfo>());
+            }
+        }
+        rewindObjects.OrderBy(obj => obj.Key);
+    }
+
+    private void LateUpdate()
+    {
+        if (Input.GetKey(KeyCode.Return))
+        {
+            isRewinding = true;
+            foreach (GameObject gameObject in rewindObjects.Keys)
+            {
+                Enemy enemy = gameObject.GetComponent<Enemy>();
+                if (enemy)
+                {
+                    enemy.enabled = false;
+                }
+                gameObject.GetComponent<Rigidbody2D>().isKinematic = true;
+
+            }
+            Time.timeScale = 3;
+        }
+        else if (rewindObjects[gameObject].Count == 0 || rewindObjects[gameObject].Peek().objectPosition != transform.position || rewindObjects[gameObject].Peek().objectRotation != transform.rotation || rewindObjects[gameObject].Peek().localScale != transform.localScale)
+        {
+            foreach(GameObject gameObject in rewindObjects.Keys)
+            {
+                rb2D = gameObject.GetComponent<Rigidbody2D>();
+                rewindObjects[gameObject].Push(new ObjectInfo(gameObject.transform.position, gameObject.transform.rotation, gameObject.transform.localScale, rb2D.velocity, rb2D.angularVelocity));
+            }
+        }
     }
 
     void FixedUpdate()
     {
-        if (isRewinding && objectsToRewind.Count > 0)
+        
+        if (isRewinding && isDone)
         {
-            objectInfo = objectsToRewind.Pop();
-            transform.position = objectInfo.objectPosition;
-            transform.rotation = objectInfo.objectRotation;
-            transform.localScale = objectInfo.localScale;
-            rb2D.velocity = objectInfo.velocity;
-            rb2D.angularVelocity = objectInfo.angularVelocity;
-            Time.timeScale = objectsToRewind.Count > 0 ? 3 : 1;
-        }
-        else if (isRewinding && objectsToRewind.Count <= 0)
-        {
-            rb2D.interpolation = RigidbodyInterpolation2D.None;
+            foreach (KeyValuePair<GameObject, Stack<ObjectInfo>> objectInfos in rewindObjects)
+            {
+                rb2D = objectInfos.Key.GetComponent<Rigidbody2D>();
+                rb2D.interpolation = RigidbodyInterpolation2D.None;
+                rb2D.isKinematic = false;
+                objectInfos.Value.Clear();
+
+                Enemy enemy = objectInfos.Key.GetComponent<Enemy>();
+                if (enemy)
+                {
+                    enemy.enabled = true;
+                }
+            }
             isRewinding = false;
+            isDone = false;
+            Time.timeScale = 1;
         }
-        else if (objectsToRewind.Count == 0 || objectsToRewind.Peek().objectPosition != transform.position || objectsToRewind.Peek().objectRotation != transform.rotation || objectsToRewind.Peek().localScale != transform.localScale)
+        else if (isRewinding && !isDone)
         {
-            objectsToRewind.Push(new ObjectInfo(transform.position, transform.rotation, transform.localScale, rb2D.velocity, rb2D.angularVelocity));
+            foreach (KeyValuePair<GameObject, Stack<ObjectInfo>> keyValuePair in rewindObjects)
+            {
+                isDone = keyValuePair.Value.Count == 0;
+                if (isDone)
+                {
+                    continue;
+                }
+
+                objectInfo = keyValuePair.Value.Pop();
+                rb2D = keyValuePair.Key.GetComponent<Rigidbody2D>();
+                keyValuePair.Key.transform.position = objectInfo.objectPosition;
+                keyValuePair.Key.transform.rotation = objectInfo.objectRotation;
+                keyValuePair.Key.transform.localScale = objectInfo.localScale;
+                rb2D.velocity = objectInfo.velocity;
+                rb2D.angularVelocity = objectInfo.angularVelocity;
+                rb2D.interpolation = RigidbodyInterpolation2D.Interpolate;
+            }
         }
     }
 
-    void ChangeTimeFlow(float endTime, float timeStep = -0.1f)
+    public static void ChangeTimeFlow(Rigidbody2D _rb2D, float endTime, float timeStep = -0.1f)
     {
-        rb2D.interpolation = RigidbodyInterpolation2D.Interpolate;
+        _rb2D.interpolation = RigidbodyInterpolation2D.Interpolate;
         for (float i = Time.timeScale; i < endTime; i += timeStep)
         {
             Time.timeScale = (float)System.Math.Round((decimal)i, 1);
             Time.fixedDeltaTime = 0.02f * Time.timeScale;
         }
-        rb2D.interpolation = RigidbodyInterpolation2D.None;
+        _rb2D.interpolation = RigidbodyInterpolation2D.None;
     }
 
     public static void RewindTime()
     {
         //AudioManager.PlayAudio("RewindTime", 2.4f);
-        FindObjectOfType<Rigidbody2D>().interpolation = RigidbodyInterpolation2D.Interpolate;
+        Time.timeScale = 3;
         isRewinding = true;
     }
 
     public static void StopRewinding()
     {
-        FindObjectOfType<Rigidbody2D>().interpolation = RigidbodyInterpolation2D.None;
+        foreach (KeyValuePair<GameObject, Stack<ObjectInfo>> objectInfos in rewindObjects)
+        {
+            objectInfos.Key.GetComponent<Rigidbody2D>().interpolation = RigidbodyInterpolation2D.None;
+            objectInfos.Value.Clear();
+        }
         isRewinding = false;
+        Time.timeScale = 1;
     }
 }
 

@@ -24,6 +24,6 @@ public class Enemy : MonoBehaviour
 
     void FixedUpdate()
     {
-        transform.position = new Vector3(Mathf.PingPong(Time.time, 3), transform.position.y);
+        transform.position = new Vector3(Mathf.PingPong(Time.fixedTime, 3), transform.position.y);
     }
 }
