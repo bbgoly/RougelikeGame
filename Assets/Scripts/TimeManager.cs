@@ -1,4 +1,4 @@
-﻿using System.Collections;
+﻿    using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -7,7 +7,6 @@ using System.Linq;
 public class TimeManager : MonoBehaviour
 {
     private Rigidbody2D rb2D;
-    private ObjectInfo objectInfo;
     private static bool isRewinding = false;
     private static bool isDone = false;
 
@@ -42,27 +41,24 @@ public class TimeManager : MonoBehaviour
 
     private void LateUpdate()
     {
-        if (Input.GetKey(KeyCode.Return))
+        foreach(GameObject currentGameObject in rewindObjects.Keys)
         {
-            isRewinding = true;
-            foreach (GameObject gameObject in rewindObjects.Keys)
+            ObjectInfo objectInfo = rewindObjects[currentGameObject].Count > 0 ?  rewindObjects[currentGameObject].Peek() : null;
+            if (Input.GetKey(KeyCode.Return) || isRewinding)
             {
-                Enemy enemy = gameObject.GetComponent<Enemy>();
+                isRewinding = true;
+                Enemy enemy = currentGameObject.GetComponent<Enemy>();
                 if (enemy)
                 {
                     enemy.enabled = false;
                 }
-                gameObject.GetComponent<Rigidbody2D>().isKinematic = true;
-
+                currentGameObject.GetComponent<Rigidbody2D>().isKinematic = true;
+                Time.timeScale = 3;
             }
-            Time.timeScale = 3;
-        }
-        else if (rewindObjects[gameObject].Count == 0 || rewindObjects[gameObject].Peek().objectPosition != transform.position || rewindObjects[gameObject].Peek().objectRotation != transform.rotation || rewindObjects[gameObject].Peek().localScale != transform.localScale)
-        {
-            foreach(GameObject gameObject in rewindObjects.Keys)
+            else if (objectInfo && (rewindObjects[currentGameObject].Count == 0 || objectInfo.objectPosition != transform.position || objectInfo.objectRotation != transform.rotation || objectInfo.localScale != transform.localScale))
             {
-                rb2D = gameObject.GetComponent<Rigidbody2D>();
-                rewindObjects[gameObject].Push(new ObjectInfo(gameObject.transform.position, gameObject.transform.rotation, gameObject.transform.localScale, rb2D.velocity, rb2D.angularVelocity));
+                rb2D = currentGameObject.GetComponent<Rigidbody2D>();
+                rewindObjects[currentGameObject].Push(new ObjectInfo(currentGameObject.transform.position, currentGameObject.transform.rotation, currentGameObject.transform.localScale, rb2D.velocity, rb2D.angularVelocity));
             }
         }
     }
