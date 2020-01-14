@@ -5,8 +5,16 @@ using UnityEngine;
 public class Player : MonoBehaviour
 {
     private Rigidbody2D rb;
+    private SpriteRenderer spriteRenderer;
+    [Header("Player Properties")]
+    public float maxHealth = 100;
+    public static float health = 100;
     [Header("Movement Properties")]
     public float moveSpeed = 5f;
+    [Space]
+    [Header("Time Properties")]
+    public float maxTimeLimit = 4f;
+    private float rewindTime = 0f;
     [Space]
     [Header("Dash Properties")]
     public float dashSpeed = 10f;
@@ -24,8 +32,8 @@ public class Player : MonoBehaviour
     public float fallMultiplier = 2.25f;
     public float lowJumpMultiplier = 1.5f;
     [Space]
-    public int maxJumps = 2;
-    private int remainingJumps = 2;
+    public int maxExtraJumps = 1;
+    private int remainingExtraJumps = 1;
     public float jumpCooldown = 0.1f;
     private bool isJumping = false;
     [Space]
@@ -40,28 +48,39 @@ public class Player : MonoBehaviour
     private void Start()
     {
         rb = GetComponent<Rigidbody2D>();
-        remainingJumps = maxJumps;
+        spriteRenderer = GetComponent<SpriteRenderer>();
+        remainingExtraJumps = maxExtraJumps;
         isJumping = false;
         isTeleportingOrDashing = false;
+        rewindTime = maxTimeLimit + 1;
+        health = maxHealth;
     }
 
     void Update()
     {
 	    inputX = Input.GetAxisRaw("Horizontal");
 	    mouseDirection = transform.position - Camera.main.ScreenToWorldPoint(Input.mousePosition);
-        if (Input.GetKeyDown(KeyCode.Return))
+        if (!TimeManager.Rewinding && Input.GetKeyDown(KeyCode.Return) && rewindTime >= maxTimeLimit + 1)
         {
             TimeManager.RewindTime();
+            rewindTime = 0;
         }
+        else if (TimeManager.Rewinding && (Input.GetKeyUp(KeyCode.Return) || rewindTime >= maxTimeLimit))
+        {
+            TimeManager.StopRewinding();
+        }
+        rewindTime += Time.deltaTime;
     }
 
     void FixedUpdate()
     {
         rb.velocity = new Vector2(inputX * moveSpeed, rb.velocity.y);
-        transform.localScale = new Vector3(inputX == 0 ? transform.localScale.x : inputX, transform.localScale.y, 0);
+        //transform.localScale = new Vector3(inputX == 0 ? transform.localScale.x : inputX, transform.localScale.y, 0);
+        spriteRenderer.flipX = inputX == 0 ? spriteRenderer.flipX : inputX == -1;
         touchingGround = Physics2D.OverlapCircle(groundCheckObject.position, groundCheckRadius, groundMask);
-        remainingJumps = touchingGround ? maxJumps : remainingJumps;
+        remainingExtraJumps = touchingGround ? maxExtraJumps : remainingExtraJumps;
         rb.gravityScale = touchingGround ? 0 : 3;
+        Debug.Log($"{remainingExtraJumps} - {touchingGround}");
 
         if (Input.GetKeyDown(KeyCode.Q) && !isTeleportingOrDashing)
         {
@@ -76,11 +95,11 @@ public class Player : MonoBehaviour
             
         }
 
-        if (Input.GetButtonDown("Jump") && !isJumping && remainingJumps > 0)
+        if (Input.GetButtonDown("Jump") && !isJumping && remainingExtraJumps > 0)
         {
             rb.velocity = new Vector2(rb.velocity.x, 0) + Vector2.up * jumpForce;
             isJumping = true;
-            remainingJumps--;
+            remainingExtraJumps--;
             StartCoroutine(jumpWait());
         }
         else if (rb.velocity.y > 0 && !Input.GetButton("Jump"))
@@ -91,6 +110,13 @@ public class Player : MonoBehaviour
         {
             rb.velocity += Vector2.up * Physics2D.gravity.y * fallMultiplier * Time.fixedDeltaTime;
         }
+    }
+
+    public static float DamagePlayer(float damage)
+    {
+        Debug.Log($"Player took {System.Math.Round((decimal)damage, 2)} damage!");
+        health -= damage;
+        return health;
     }
 
     public IEnumerator jumpWait()

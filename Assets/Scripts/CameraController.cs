@@ -25,7 +25,7 @@ public class CameraController : MonoBehaviour
             lockedCam = !lockedCam;
         }
         mousePos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-        offset = lockedCam ? new Vector3(-0.2f * Mathf.Sign(target.transform.position.x - mousePos.x), -0.2f * Mathf.Sign(target.transform.position.y - mousePos.y), offset.z) : Vector3.zero;
+        offset = lockedCam ? new Vector3(-0.2f * Mathf.Sign(target.transform.position.x - mousePos.x), -0.2f * Mathf.Sign(target.transform.position.y - mousePos.y), offset.z) : new Vector3(0,  0, offset.z);
     }
 
     private void FixedUpdate()

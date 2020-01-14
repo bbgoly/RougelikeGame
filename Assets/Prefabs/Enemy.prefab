@@ -28,7 +28,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 7126596619041726347}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -3.79, y: -2.25, z: 0}
+  m_LocalPosition: {x: -3.79, y: -2.255, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
@@ -98,8 +98,10 @@ MonoBehaviour:
   enemyName: bruh
   maxHealth: 100
   currentHealth: 100
+  aggroRange: 0
   deathEffect: {fileID: 9162854696483086870, guid: 706ea7cc9a26bca47a4b64bdda578faf,
     type: 3}
+  player: {fileID: 0}
 --- !u!50 &7126596619041726351
 Rigidbody2D:
   serializedVersion: 4
