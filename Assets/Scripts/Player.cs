@@ -100,7 +100,6 @@ public class Player : MonoBehaviour
         if (Input.GetButtonDown("Jump") && !isJumping && remainingExtraJumps > 0)
         {
             animator.SetBool("Jumping", true);
-            Debug.Log(animator.GetBool("Jumping"));
             rb.velocity = new Vector2(rb.velocity.x, 0) + Vector2.up * jumpForce;
             isJumping = true;
             remainingExtraJumps--;
@@ -116,10 +115,11 @@ public class Player : MonoBehaviour
             animator.SetBool("Jumping", false);
             animator.SetBool("Falling", true);
         }
-        else if(rb.velocity.y <= 2 && touchingGround && animator.GetBool("Falling"))
+        else if((rb.velocity.y <= 2 || touchingGround) && animator.GetBool("Falling"))
         {
             animator.SetBool("Falling", false);
             animator.SetBool("Land", true);
+            StartCoroutine(landedCoroutine());
         }
     }
 
@@ -128,6 +128,12 @@ public class Player : MonoBehaviour
         Debug.Log($"Player took {System.Math.Round((decimal)damage, 2)} damage!");
         health -= damage;
         return health;
+    }
+
+    public IEnumerator landedCoroutine()
+    {
+        yield return new WaitForSeconds(1);
+        animator.SetBool("Land", false);
     }
 
     public IEnumerator jumpWait()

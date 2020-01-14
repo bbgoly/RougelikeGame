@@ -13,6 +13,8 @@ public class Enemy : MonoBehaviour
     public GameObject deathEffect;
     
     private GameObject player;
+    private SpriteRenderer spriteRenderer;
+    private Animator animator;
 
     private bool inRange
     {
@@ -33,6 +35,8 @@ public class Enemy : MonoBehaviour
     private void Awake()
     {
         player = GameObject.FindGameObjectWithTag("Player");
+        spriteRenderer = GetComponent<SpriteRenderer>();
+        animator = GetComponent<Animator>();
         currentHealth = maxHealth;
     }
 
@@ -67,5 +71,7 @@ public class Enemy : MonoBehaviour
         {
             transform.position = new Vector3(Vector3.MoveTowards(transform.position, player.transform.position, 0.1f).x, transform.position.y);
         }
+        animator.SetFloat("EnemySpeed", !canAttack ? 1 : 0);
+        spriteRenderer.flipX = player.transform.position.x < transform.position.x ? 
     }
 }

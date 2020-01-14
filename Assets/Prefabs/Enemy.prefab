@@ -98,10 +98,11 @@ MonoBehaviour:
   enemyName: bruh
   maxHealth: 100
   currentHealth: 100
-  aggroRange: 0
+  aggroRange: 20
+  attackRange: 5
+  enemyDamage: 10
   deathEffect: {fileID: 9162854696483086870, guid: 706ea7cc9a26bca47a4b64bdda578faf,
     type: 3}
-  player: {fileID: 0}
 --- !u!50 &7126596619041726351
 Rigidbody2D:
   serializedVersion: 4

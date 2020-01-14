@@ -1,0 +1,583 @@
+fileFormatVersion: 2
+guid: c9576a2e158a1ec45b119769f16a882f
+TextureImporter:
+  internalIDToNameTable:
+  - first:
+      213: 4461119755764788210
+    second: undead_attack_sheet_0
+  - first:
+      213: -7107637729975276077
+    second: undead_attack_sheet_1
+  - first:
+      213: -267568735432667451
+    second: undead_attack_sheet_2
+  - first:
+      213: 1436518828159539673
+    second: undead_attack_sheet_3
+  - first:
+      213: 5688236929447210046
+    second: undead_attack_sheet_4
+  - first:
+      213: 3296148925881349337
+    second: undead_attack_sheet_5
+  - first:
+      213: -4790219378972418632
+    second: undead_attack_sheet_6
+  - first:
+      213: -379134035731712225
+    second: undead_attack_sheet_7
+  - first:
+      213: -5300546343163017644
+    second: undead_attack_sheet_8
+  - first:
+      213: 4778751430600651912
+    second: undead_attack_sheet_9
+  - first:
+      213: 7085219111132134450
+    second: undead_attack_sheet_10
+  - first:
+      213: -384218107231596311
+    second: undead_attack_sheet_11
+  - first:
+      213: -5153128266201876505
+    second: undead_attack_sheet_12
+  - first:
+      213: 2022126624698996617
+    second: undead_attack_sheet_13
+  - first:
+      213: -4103843489660439642
+    second: undead_attack_sheet_14
+  - first:
+      213: 4115960677262708875
+    second: undead_attack_sheet_15
+  - first:
+      213: 4781212433474325021
+    second: undead_attack_sheet_16
+  - first:
+      213: 6644371352906908286
+    second: undead_attack_sheet_17
+  - first:
+      213: 8340646539014879595
+    second: undead_attack_sheet_18
+  - first:
+      213: -2379811496301505041
+    second: undead_attack_sheet_19
+  externalObjects: {}
+  serializedVersion: 10
+  mipmaps:
+    mipMapMode: 0
+    enableMipMap: 0
+    sRGBTexture: 1
+    linearTexture: 0
+    fadeOut: 0
+    borderMipMap: 0
+    mipMapsPreserveCoverage: 0
+    alphaTestReferenceValue: 0.5
+    mipMapFadeDistanceStart: 1
+    mipMapFadeDistanceEnd: 3
+  bumpmap:
+    convertToNormalMap: 0
+    externalNormalMap: 0
+    heightScale: 0.25
+    normalMapFilter: 0
+  isReadable: 0
+  streamingMipmaps: 0
+  streamingMipmapsPriority: 0
+  grayScaleToAlpha: 0
+  generateCubemap: 6
+  cubemapConvolution: 0
+  seamlessCubemap: 0
+  textureFormat: 1
+  maxTextureSize: 2048
+  textureSettings:
+    serializedVersion: 2
+    filterMode: 0
+    aniso: -1
+    mipBias: -100
+    wrapU: 1
+    wrapV: 1
+    wrapW: 1
+  nPOTScale: 0
+  lightmap: 0
+  compressionQuality: 50
+  spriteMode: 2
+  spriteExtrude: 1
+  spriteMeshType: 1
+  alignment: 0
+  spritePivot: {x: 0.5, y: 0.5}
+  spritePixelsToUnits: 100
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
+  spriteGenerateFallbackPhysicsShape: 1
+  alphaUsage: 1
+  alphaIsTransparency: 1
+  spriteTessellationDetail: -1
+  textureType: 8
+  textureShape: 1
+  singleChannelComponent: 0
+  maxTextureSizeSet: 0
+  compressionQualitySet: 0
+  textureFormatSet: 0
+  platformSettings:
+  - serializedVersion: 3
+    buildTarget: DefaultTexturePlatform
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 3
+    buildTarget: Standalone
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  spriteSheet:
+    serializedVersion: 2
+    sprites:
+    - serializedVersion: 2
+      name: undead_attack_sheet_0
+      rect:
+        serializedVersion: 2
+        x: 6
+        y: 8
+        width: 30
+        height: 26
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: ea8a112adba296143992ff135e76d022
+      internalID: 4461119755764788210
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: undead_attack_sheet_1
+      rect:
+        serializedVersion: 2
+        x: 62
+        y: 8
+        width: 30
+        height: 26
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 9f3df4b8253c4ab4dbdb5c7a9e7f8fab
+      internalID: -7107637729975276077
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: undead_attack_sheet_2
+      rect:
+        serializedVersion: 2
+        x: 122
+        y: 8
+        width: 29
+        height: 35
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: a02060b57f44f774eab9688f4b7db6d2
+      internalID: -267568735432667451
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: undead_attack_sheet_3
+      rect:
+        serializedVersion: 2
+        x: 178
+        y: 8
+        width: 29
+        height: 35
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: c596445527ef17f4d8ea9ca1d775cd80
+      internalID: 1436518828159539673
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: undead_attack_sheet_4
+      rect:
+        serializedVersion: 2
+        x: 229
+        y: 8
+        width: 30
+        height: 35
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: d9b3c7fa5f371a5428c8d42b468bc664
+      internalID: 5688236929447210046
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: undead_attack_sheet_5
+      rect:
+        serializedVersion: 2
+        x: 285
+        y: 8
+        width: 30
+        height: 35
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: f25081528dc069a44b390e25737a1d35
+      internalID: 3296148925881349337
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: undead_attack_sheet_6
+      rect:
+        serializedVersion: 2
+        x: 341
+        y: 8
+        width: 32
+        height: 35
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 5c0062e96c65c484faf439121b1f8869
+      internalID: -4790219378972418632
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: undead_attack_sheet_7
+      rect:
+        serializedVersion: 2
+        x: 410
+        y: 5
+        width: 30
+        height: 31
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 54a585df58c1cf34f9e89668de9b3bf0
+      internalID: -379134035731712225
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: undead_attack_sheet_8
+      rect:
+        serializedVersion: 2
+        x: 468
+        y: 5
+        width: 28
+        height: 27
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 555c2f1afb8bbfe4884189c2b1013510
+      internalID: -5300546343163017644
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: undead_attack_sheet_9
+      rect:
+        serializedVersion: 2
+        x: 524
+        y: 6
+        width: 28
+        height: 23
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: d20fa6ce1488c964f80224a13e449ba9
+      internalID: 4778751430600651912
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: undead_attack_sheet_10
+      rect:
+        serializedVersion: 2
+        x: 580
+        y: 6
+        width: 28
+        height: 23
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 024c98752ac8cff46858a41ed4657204
+      internalID: 7085219111132134450
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: undead_attack_sheet_11
+      rect:
+        serializedVersion: 2
+        x: 636
+        y: 5
+        width: 26
+        height: 25
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 5b12e5007d540e848b384bef2615bc18
+      internalID: -384218107231596311
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: undead_attack_sheet_12
+      rect:
+        serializedVersion: 2
+        x: 692
+        y: 8
+        width: 23
+        height: 25
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 9e852419339f2994d9ef41b3f8c3213b
+      internalID: -5153128266201876505
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: undead_attack_sheet_13
+      rect:
+        serializedVersion: 2
+        x: 748
+        y: 7
+        width: 25
+        height: 26
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: c441f6fbbae5e7b46b5671db6f415522
+      internalID: 2022126624698996617
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: undead_attack_sheet_14
+      rect:
+        serializedVersion: 2
+        x: 804
+        y: 7
+        width: 29
+        height: 26
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: f03ac31f46f25db48889930f97d7a25f
+      internalID: -4103843489660439642
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: undead_attack_sheet_15
+      rect:
+        serializedVersion: 2
+        x: 860
+        y: 8
+        width: 16
+        height: 25
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 79e5f7161be579a4eadc28914839f823
+      internalID: 4115960677262708875
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: undead_attack_sheet_16
+      rect:
+        serializedVersion: 2
+        x: 915
+        y: 8
+        width: 20
+        height: 25
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 59f0872f6a2a13043942af9d9cfad183
+      internalID: 4781212433474325021
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: undead_attack_sheet_17
+      rect:
+        serializedVersion: 2
+        x: 960
+        y: 7
+        width: 28
+        height: 26
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: f5d8e07d7e27c634d8ad48f0e2794b0c
+      internalID: 6644371352906908286
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: undead_attack_sheet_18
+      rect:
+        serializedVersion: 2
+        x: 1013
+        y: 7
+        width: 31
+        height: 26
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 2d2e381749148ee43adc3c62a77638c8
+      internalID: 8340646539014879595
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: undead_attack_sheet_19
+      rect:
+        serializedVersion: 2
+        x: 1070
+        y: 8
+        width: 30
+        height: 26
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 7e63e0f4b14b24d4580329370bd33db4
+      internalID: -2379811496301505041
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    outline: []
+    physicsShape: []
+    bones: []
+    spriteID: 5e97eb03825dee720800000000000000
+    internalID: 0
+    vertices: []
+    indices: 
+    edges: []
+    weights: []
+    secondaryTextures: []
+  spritePackingTag: 
+  pSDRemoveMatte: 0
+  pSDShowRemoveMatteOption: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
