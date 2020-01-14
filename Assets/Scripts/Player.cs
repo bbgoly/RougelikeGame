@@ -6,6 +6,7 @@ public class Player : MonoBehaviour
 {
     private Rigidbody2D rb;
     private SpriteRenderer spriteRenderer;
+    private Animator animator;
     [Header("Player Properties")]
     public float maxHealth = 100;
     public static float health = 100;
@@ -49,6 +50,7 @@ public class Player : MonoBehaviour
     {
         rb = GetComponent<Rigidbody2D>();
         spriteRenderer = GetComponent<SpriteRenderer>();
+        animator = GetComponent<Animator>();
         remainingExtraJumps = maxExtraJumps;
         isJumping = false;
         isTeleportingOrDashing = false;
@@ -59,6 +61,7 @@ public class Player : MonoBehaviour
     void Update()
     {
 	    inputX = Input.GetAxisRaw("Horizontal");
+        animator.SetFloat("PlayerSpeed", Mathf.Abs(inputX));
 	    mouseDirection = transform.position - Camera.main.ScreenToWorldPoint(Input.mousePosition);
         if (!TimeManager.Rewinding && Input.GetKeyDown(KeyCode.Return) && rewindTime >= maxTimeLimit + 1)
         {
@@ -80,7 +83,6 @@ public class Player : MonoBehaviour
         touchingGround = Physics2D.OverlapCircle(groundCheckObject.position, groundCheckRadius, groundMask);
         remainingExtraJumps = touchingGround ? maxExtraJumps : remainingExtraJumps;
         rb.gravityScale = touchingGround ? 0 : 3;
-        Debug.Log($"{remainingExtraJumps} - {touchingGround}");
 
         if (Input.GetKeyDown(KeyCode.Q) && !isTeleportingOrDashing)
         {
@@ -97,6 +99,8 @@ public class Player : MonoBehaviour
 
         if (Input.GetButtonDown("Jump") && !isJumping && remainingExtraJumps > 0)
         {
+            animator.SetBool("Jumping", true);
+            Debug.Log(animator.GetBool("Jumping"));
             rb.velocity = new Vector2(rb.velocity.x, 0) + Vector2.up * jumpForce;
             isJumping = true;
             remainingExtraJumps--;
@@ -106,9 +110,16 @@ public class Player : MonoBehaviour
         {
             rb.velocity -= Vector2.down * Physics2D.gravity.y * lowJumpMultiplier * Time.fixedDeltaTime;
         }
-        else if (rb.velocity.y < 0)
+        else if (rb.velocity.y < 0 && !touchingGround)
         {
             rb.velocity += Vector2.up * Physics2D.gravity.y * fallMultiplier * Time.fixedDeltaTime;
+            animator.SetBool("Jumping", false);
+            animator.SetBool("Falling", true);
+        }
+        else if(rb.velocity.y <= 2 && touchingGround && animator.GetBool("Falling"))
+        {
+            animator.SetBool("Falling", false);
+            animator.SetBool("Land", true);
         }
     }
 

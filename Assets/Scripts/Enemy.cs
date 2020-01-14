@@ -59,14 +59,13 @@ public class Enemy : MonoBehaviour
 
     private void FixedUpdate()
     {
-        if (!TimeManager.Rewinding && !inRange)
+        if (!TimeManager.Rewinding && !inRange && !canAttack)
         {
             transform.position = new Vector3(transform.position.x + Mathf.Sin(Time.fixedTime) / 8, transform.position.y);
         }
-        else if (inRange && !canAttack)
+        else if (!TimeManager.Rewinding && inRange && !canAttack)
         {
             transform.position = new Vector3(Vector3.MoveTowards(transform.position, player.transform.position, 0.1f).x, transform.position.y);
         }
-        Debug.Log(inRange);
     }
 }
