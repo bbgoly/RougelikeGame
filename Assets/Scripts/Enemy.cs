@@ -9,6 +9,7 @@ public class Enemy : MonoBehaviour
     public float currentHealth = 100;
     public float aggroRange = 20;
     public float attackRange = 5;
+    public float attackCooldown = 0.5f;
     public float enemyDamage = 10;
     public GameObject deathEffect;
     
@@ -54,12 +55,20 @@ public class Enemy : MonoBehaviour
 
     private void Update()
     {
-        if (canAttack)
+        if (canAttack && !animator.GetBool("Attacking"))
         {
             Player.DamagePlayer(enemyDamage);
+            animator.SetBool("Attacking", true);
+            StartCoroutine(AttackCoroutine());
         }
     }
 
+    private IEnumerator AttackCoroutine()
+    {
+        yield return new WaitForSeconds(1.5f + attackCooldown);
+        Debug.Log("uwu");
+        animator.SetBool("Attacking", false);
+    }
 
     private void FixedUpdate()
     {
@@ -71,7 +80,7 @@ public class Enemy : MonoBehaviour
         {
             transform.position = new Vector3(Vector3.MoveTowards(transform.position, player.transform.position, 0.1f).x, transform.position.y);
         }
-        animator.SetFloat("EnemySpeed", !canAttack ? 1 : 0);
-        spriteRenderer.flipX = player.transform.position.x < transform.position.x ? 
+        animator.SetFloat("EnemySpeed", !animator.GetBool("Attacking") ? 1 : 0);
+        spriteRenderer.flipX = (player.transform.position.x - transform.position.x) < 0;
     }
 }
