@@ -2,19 +2,21 @@
 
 public class CameraController : MonoBehaviour
 {
-    public GameObject target;
-    public float smoothSpeed = 5f;
-    public float maxUnlockedSpeed = 10f;
+    #region Public Properties
+    public Rigidbody2D targetRB2D;
     public Vector3 offset = new Vector3(0, 0, -10);
+    public float smoothSpeed = 5f, maxUnlockedSpeed = 10f;
+    #endregion
 
+    #region Private Properties
     private bool lockedCam = true;
-    private Vector3 currentVelocity;
-    private Vector3 mousePos;
+    private Vector3 currentVelocity, mousePos;
+    #endregion
 
+    #region Main code
     private void Start()
     {
-        currentVelocity = target.GetComponent<Rigidbody2D>().velocity;
-        transform.position = target.transform.position;
+        transform.position = targetRB2D.transform.position;
         lockedCam = true;
     }
 
@@ -25,11 +27,12 @@ public class CameraController : MonoBehaviour
             lockedCam = !lockedCam;
         }
         mousePos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-        offset = lockedCam ? new Vector3(-0.2f * Mathf.Sign(target.transform.position.x - mousePos.x), -0.2f * Mathf.Sign(target.transform.position.y - mousePos.y), offset.z) : new Vector3(0,  0, offset.z);
+        offset = lockedCam ? new Vector3(-0.2f * Mathf.Sign(targetRB2D.transform.position.x - mousePos.x), -0.2f * Mathf.Sign(targetRB2D.transform.position.y - mousePos.y), offset.z) : new Vector3(0,  0, offset.z);
     }
 
     private void FixedUpdate()
     {
-        transform.position = Vector3.SmoothDamp(transform.position, (lockedCam ? target.transform.position : mousePos) + offset, ref currentVelocity, smoothSpeed * Time.fixedDeltaTime, lockedCam ? Mathf.Infinity : maxUnlockedSpeed, Time.fixedDeltaTime);
+        transform.position = Vector3.SmoothDamp(transform.position, (lockedCam ? targetRB2D.transform.position : mousePos) + offset, ref currentVelocity, smoothSpeed * Time.fixedDeltaTime, lockedCam ? Mathf.Infinity : maxUnlockedSpeed, Time.fixedDeltaTime);
     }
+    #endregion
 }

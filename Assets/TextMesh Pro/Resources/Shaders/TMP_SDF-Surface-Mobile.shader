@@ -59,7 +59,7 @@ SubShader {
 
 	CGPROGRAM
 	#pragma surface PixShader Lambert alpha:blend vertex:VertShader noforwardadd nolightmap nodirlightmap
-	#pragma target 3.0
+	#pragma targetRB2D 3.0
 	#pragma shader_feature __ GLOW_ON
 
 	#include "TMPro_Properties.cginc"

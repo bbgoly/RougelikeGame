@@ -111,7 +111,7 @@ SubShader {
 
 	Pass {
 		CGPROGRAM
-		#pragma target 3.0
+		#pragma targetRB2D 3.0
 		#pragma vertex VertShader
 		#pragma fragment PixShader
 		#pragma shader_feature __ BEVEL_ON
@@ -232,7 +232,7 @@ SubShader {
 		}
 
 
-		fixed4 PixShader(pixel_t input) : SV_Target
+		fixed4 PixShader(pixel_t input) : SV_targetRB2D
 		{
 			UNITY_SETUP_INSTANCE_ID(input);
 

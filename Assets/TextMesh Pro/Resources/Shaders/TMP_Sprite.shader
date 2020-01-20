@@ -93,7 +93,7 @@ Shader "TextMeshPro/Sprite"
 
 			sampler2D _MainTex;
 
-			fixed4 frag(v2f IN) : SV_Target
+			fixed4 frag(v2f IN) : SV_targetRB2D
 			{
 				half4 color = (tex2D(_MainTex, IN.texcoord) + _TextureSampleAdd) * IN.color;
 				

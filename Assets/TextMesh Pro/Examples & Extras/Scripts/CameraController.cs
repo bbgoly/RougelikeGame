@@ -10,9 +10,9 @@ namespace TMPro.Examples
         public enum CameraModes { Follow, Isometric, Free }
 
         private Transform cameraTransform;
-        private Transform dummyTarget;
+        private Transform dummytargetRB2D;
 
-        public Transform CameraTarget;
+        public Transform CameratargetRB2D;
 
         public float FollowDistance = 30.0f;
         public float MaxFollowDistance = 100.0f;
@@ -68,11 +68,11 @@ namespace TMPro.Examples
         // Use this for initialization
         void Start()
         {
-            if (CameraTarget == null)
+            if (CameratargetRB2D == null)
             {
-                // If we don't have a target (assigned by the player, create a dummy in the center of the scene).
-                dummyTarget = new GameObject("Camera Target").transform;
-                CameraTarget = dummyTarget;
+                // If we don't have a targetRB2D (assigned by the player, create a dummy in the center of the scene).
+                dummytargetRB2D = new GameObject("Camera targetRB2D").transform;
+                CameratargetRB2D = dummytargetRB2D;
             }
         }
 
@@ -82,16 +82,16 @@ namespace TMPro.Examples
             GetPlayerInput();
 
 
-            // Check if we still have a valid target
-            if (CameraTarget != null)
+            // Check if we still have a valid targetRB2D
+            if (CameratargetRB2D != null)
             {
                 if (CameraMode == CameraModes.Isometric)
                 {
-                    desiredPosition = CameraTarget.position + Quaternion.Euler(ElevationAngle, OrbitalAngle, 0f) * new Vector3(0, 0, -FollowDistance);
+                    desiredPosition = CameratargetRB2D.position + Quaternion.Euler(ElevationAngle, OrbitalAngle, 0f) * new Vector3(0, 0, -FollowDistance);
                 }
                 else if (CameraMode == CameraModes.Follow)
                 {
-                    desiredPosition = CameraTarget.position + CameraTarget.TransformDirection(Quaternion.Euler(ElevationAngle, OrbitalAngle, 0f) * (new Vector3(0, 0, -FollowDistance)));
+                    desiredPosition = CameratargetRB2D.position + CameratargetRB2D.TransformDirection(Quaternion.Euler(ElevationAngle, OrbitalAngle, 0f) * (new Vector3(0, 0, -FollowDistance)));
                 }
                 else
                 {
@@ -111,10 +111,10 @@ namespace TMPro.Examples
                 }
 
                 if (RotationSmoothing == true)
-                    cameraTransform.rotation = Quaternion.Lerp(cameraTransform.rotation, Quaternion.LookRotation(CameraTarget.position - cameraTransform.position), RotationSmoothingValue * Time.deltaTime);
+                    cameraTransform.rotation = Quaternion.Lerp(cameraTransform.rotation, Quaternion.LookRotation(CameratargetRB2D.position - cameraTransform.position), RotationSmoothingValue * Time.deltaTime);
                 else
                 {
-                    cameraTransform.LookAt(CameraTarget);
+                    cameraTransform.LookAt(CameratargetRB2D);
                 }
 
             }
@@ -195,7 +195,7 @@ namespace TMPro.Examples
 
                 }
 
-                // Check for left mouse button to select a new CameraTarget or to reset Follow position
+                // Check for left mouse button to select a new CameratargetRB2D or to reset Follow position
                 if (Input.GetMouseButton(0))
                 {
                     Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
@@ -203,14 +203,14 @@ namespace TMPro.Examples
 
                     if (Physics.Raycast(ray, out hit, 300, 1 << 10 | 1 << 11 | 1 << 12 | 1 << 14))
                     {
-                        if (hit.transform == CameraTarget)
+                        if (hit.transform == CameratargetRB2D)
                         {
                             // Reset Follow Position
                             OrbitalAngle = 0;
                         }
                         else
                         {
-                            CameraTarget = hit.transform;
+                            CameratargetRB2D = hit.transform;
                             OrbitalAngle = 0;
                             MovementSmoothing = previousSmoothing;
                         }
@@ -221,22 +221,22 @@ namespace TMPro.Examples
 
                 if (Input.GetMouseButton(2))
                 {
-                    if (dummyTarget == null)
+                    if (dummytargetRB2D == null)
                     {
-                        // We need a Dummy Target to anchor the Camera
-                        dummyTarget = new GameObject("Camera Target").transform;
-                        dummyTarget.position = CameraTarget.position;
-                        dummyTarget.rotation = CameraTarget.rotation;
-                        CameraTarget = dummyTarget;
+                        // We need a Dummy targetRB2D to anchor the Camera
+                        dummytargetRB2D = new GameObject("Camera targetRB2D").transform;
+                        dummytargetRB2D.position = CameratargetRB2D.position;
+                        dummytargetRB2D.rotation = CameratargetRB2D.rotation;
+                        CameratargetRB2D = dummytargetRB2D;
                         previousSmoothing = MovementSmoothing;
                         MovementSmoothing = false;
                     }
-                    else if (dummyTarget != CameraTarget)
+                    else if (dummytargetRB2D != CameratargetRB2D)
                     {
-                        // Move DummyTarget to CameraTarget
-                        dummyTarget.position = CameraTarget.position;
-                        dummyTarget.rotation = CameraTarget.rotation;
-                        CameraTarget = dummyTarget;
+                        // Move DummytargetRB2D to CameratargetRB2D
+                        dummytargetRB2D.position = CameratargetRB2D.position;
+                        dummytargetRB2D.rotation = CameratargetRB2D.rotation;
+                        CameratargetRB2D = dummytargetRB2D;
                         previousSmoothing = MovementSmoothing;
                         MovementSmoothing = false;
                     }
@@ -247,7 +247,7 @@ namespace TMPro.Examples
 
                     moveVector = cameraTransform.TransformDirection(mouseX, mouseY, 0);
 
-                    dummyTarget.Translate(-moveVector, Space.World);
+                    dummytargetRB2D.Translate(-moveVector, Space.World);
 
                 }
 

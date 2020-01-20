@@ -72,7 +72,7 @@ SubShader {
 
 	CGPROGRAM
 	#pragma surface PixShader BlinnPhong alpha:blend vertex:VertShader nolightmap nodirlightmap
-	#pragma target 3.0
+	#pragma targetRB2D 3.0
 	#pragma shader_feature __ GLOW_ON
 	#pragma glsl
 

@@ -5,10 +5,16 @@ using System.Linq;
 
 public class TimeManager : MonoBehaviour
 {
+    #region Public Properties
     public static Dictionary<GameObject, Stack<ObjectInfo>> rewindObjects = new Dictionary<GameObject, Stack<ObjectInfo>>();
     public static bool Rewinding = false;
+    #endregion
 
+    #region Private Properties
     private static bool isDone = false;
+    #endregion
+
+    #region Unused code
     /*
     void Update()
     {
@@ -23,6 +29,9 @@ public class TimeManager : MonoBehaviour
         if 
     }
     */
+    #endregion
+
+    #region Main code
     private void Awake()
     {
         rewindObjects.Clear();
@@ -33,7 +42,7 @@ public class TimeManager : MonoBehaviour
                 rewindObjects.Add(gameObject, new Stack<ObjectInfo>());
             }
         }
-        rewindObjects.OrderBy(obj => obj.Key);
+//        rewindObjects.OrderBy(obj => obj.Key);
     }
 
     private void LateUpdate()
@@ -51,36 +60,37 @@ public class TimeManager : MonoBehaviour
 
     void FixedUpdate()
     {
-        if (Rewinding && isDone)
-        {
-            StopRewinding();
-        }
-        else if (Rewinding && !isDone)
+        if (Rewinding && !isDone)
         {
             foreach (KeyValuePair<GameObject, Stack<ObjectInfo>> keyValuePair in rewindObjects)
             {
                 isDone = keyValuePair.Value.Count == 0;
-                if (isDone)
+                if (!isDone)
                 {
-                    continue;
+                    ObjectInfo objectInfo = keyValuePair.Value.Pop();
+                    Rigidbody2D rb2D = keyValuePair.Key.GetComponent<Rigidbody2D>();
+
+                    rb2D.isKinematic = true;
+                    rb2D.velocity = objectInfo.velocity;
+                    rb2D.angularVelocity = objectInfo.angularVelocity;
+                    rb2D.interpolation = RigidbodyInterpolation2D.Interpolate;
+
+                    keyValuePair.Key.transform.position = objectInfo.objectPosition;
+                    keyValuePair.Key.transform.rotation = objectInfo.objectRotation;
+                    keyValuePair.Key.transform.localScale = objectInfo.localScale;
                 }
-
-                ObjectInfo objectInfo = keyValuePair.Value.Pop();
-                Rigidbody2D rb2D = keyValuePair.Key.GetComponent<Rigidbody2D>();
-                rb2D.isKinematic = true;
-
-                keyValuePair.Key.transform.position = objectInfo.objectPosition;
-                keyValuePair.Key.transform.rotation = objectInfo.objectRotation;
-                keyValuePair.Key.transform.localScale = objectInfo.localScale;
-                rb2D.velocity = objectInfo.velocity;
-                rb2D.angularVelocity = objectInfo.angularVelocity;
-                rb2D.interpolation = RigidbodyInterpolation2D.Interpolate;
             }
+        }
+        else if (Rewinding && isDone)
+        {
+            StopRewinding();
         }
     }
 
     public static void ChangeTimeFlow(Rigidbody2D rb2D, float endTime, float timeStep = -0.1f)
     {
+        Debug.Log("uwu");
+        Rewinding = true;
         rb2D.interpolation = RigidbodyInterpolation2D.Interpolate;
         for (float i = Time.timeScale; i < endTime; i += timeStep)
         {
@@ -88,6 +98,7 @@ public class TimeManager : MonoBehaviour
             Time.fixedDeltaTime = 0.02f * Time.timeScale;
         }
         rb2D.interpolation = RigidbodyInterpolation2D.None;
+        Rewinding = false;
     }
 
     public static void RewindTime() //Probably rewind the time GUI as well?
@@ -111,7 +122,9 @@ public class TimeManager : MonoBehaviour
         isDone = false;
         Time.timeScale = 1;
     }
+    #endregion
 }
+
 
 public struct ObjectInfo
 {

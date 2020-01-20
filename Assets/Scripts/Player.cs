@@ -4,48 +4,41 @@ using UnityEngine;
 
 public class Player : MonoBehaviour
 {
-    private Rigidbody2D rb;
-    private SpriteRenderer spriteRenderer;
-    private Animator animator;
+    #region Public Properties
     [Header("Player Properties")]
-    public float maxHealth = 100;
-    public static float health = 100;
-    [Header("Movement Properties")]
-    public float moveSpeed = 5f;
-    [Space]
-    [Header("Time Properties")]
-    public float maxTimeLimit = 4f;
-    private float rewindTime = 0f;
-    [Space]
-    [Header("Dash Properties")]
-    public float dashSpeed = 10f;
-    public float dashDamage = 15f;
-    public float dashCooldown = 0.8f;
-    [Space]
-    [Header("Teleport Dash Properties")]
-    public float teleportMaxDistance = 10f;
-    public float teleportDamage = 20f;
-    public float teleportCooldown = 1.5f;
-    private bool isTeleportingOrDashing = false;
-    [Space]
+    public float maxHealth = 100f, moveSpeed = 5f;
+    public static float health = 100f;
     [Header("Jump Properties")]
-    public float jumpForce = 15f;
-    public float fallMultiplier = 2.25f;
-    public float lowJumpMultiplier = 1.5f;
-    [Space]
-    public int maxExtraJumps = 1;
-    private int remainingExtraJumps = 1;
-    public float jumpCooldown = 0.1f;
-    private bool isJumping = false;
-    [Space]
     public LayerMask groundMask;
     public Transform groundCheckObject;
-    public float groundCheckRadius = 0.25f;
-    private bool touchingGround = false;
-    
-    private float inputX;
+    public int maxExtraJumps = 1;
+    public float jumpPower = 15f, jumpCooldown = 0.1f, fallMultiplier = 2.25f, lowJumpMultiplier = 1.5f, groundCheckRadius = 0.25f;
+    [Header("Dash Properties")]
+    public float dashSpeed = 10f, dashCooldown = 0.8f;
+    [Header("Time Properties")]
+    public float maxTimeLimit = 4f, slowMotionSpeed = 1.25f;
+    #endregion
+
+    #region Private Properties
+    private Rigidbody2D rb;
+    private Animator animator;
+    private SpriteRenderer spriteRenderer;
+
     private Vector2 mouseDirection;
-    
+    private int remainingExtraJumps = 1;
+    private float inputX, rewindTime = 0f, slowMotionTime = 0f;
+    private bool touchingGround = false, isJumping = false;
+    #endregion
+
+    #region Currently unused properties
+    //[Header("Teleport Dash Properties")]
+    //public float teleportMaxDistance = 10f;
+    //public float teleportDamage = 20f;
+    //public float teleportCooldown = 1.5f;
+    //private bool isTeleportingOrDashing = false;
+    #endregion
+
+    #region Main code
     private void Start()
     {
         rb = GetComponent<Rigidbody2D>();
@@ -53,7 +46,7 @@ public class Player : MonoBehaviour
         animator = GetComponent<Animator>();
         remainingExtraJumps = maxExtraJumps;
         isJumping = false;
-        isTeleportingOrDashing = false;
+        //isTeleportingOrDashing = false;
         rewindTime = maxTimeLimit + 1;
         health = maxHealth;
     }
@@ -72,19 +65,30 @@ public class Player : MonoBehaviour
         {
             TimeManager.StopRewinding();
         }
+        else if (!TimeManager.Rewinding && Input.GetKeyDown(KeyCode.LeftShift) && slowMotionTime >= maxTimeLimit + 1)
+        {
+            TimeManager.ChangeTimeFlow(rb, slowMotionSpeed);
+        }
+        else if (!TimeManager.Rewinding && Input.GetKeyUp(KeyCode.LeftShift) && slowMotionTime >= maxTimeLimit)
+        {
+            TimeManager.ChangeTimeFlow(rb, 0.25f);
+        }
         rewindTime += Time.deltaTime;
+        slowMotionTime += Time.deltaTime;
     }
 
     void FixedUpdate()
     {
         rb.velocity = new Vector2(inputX * moveSpeed, rb.velocity.y);
-        //transform.localScale = new Vector3(inputX == 0 ? transform.localScale.x : inputX, transform.localScale.y, 0);
         spriteRenderer.flipX = inputX == 0 ? spriteRenderer.flipX : inputX == -1;
         touchingGround = Physics2D.OverlapCircle(groundCheckObject.position, groundCheckRadius, groundMask);
         remainingExtraJumps = touchingGround ? maxExtraJumps : remainingExtraJumps;
         rb.gravityScale = touchingGround ? 0 : 3;
 
-        if (Input.GetKeyDown(KeyCode.Q) && !isTeleportingOrDashing)
+        #region Code that I may use in the future
+        //transform.localScale = new Vector3(inputX == 0 ? transform.localScale.x : inputX, transform.localScale.y, 0);
+
+        /*if (Input.GetKeyDown(KeyCode.Q) && !isTeleportingOrDashing)
         {
             Vector2 mousePos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
             rb.gravityScale = 0.5f;
@@ -96,11 +100,13 @@ public class Player : MonoBehaviour
         {
             
         }
+        */
+        #endregion
 
         if (Input.GetButtonDown("Jump") && !isJumping && remainingExtraJumps > 0)
         {
             animator.SetBool("Jumping", true);
-            rb.velocity = new Vector2(rb.velocity.x, 0) + Vector2.up * jumpForce;
+            rb.velocity = new Vector2(rb.velocity.x, 0) + Vector2.up * jumpPower;
             isJumping = true;
             remainingExtraJumps--;
             StartCoroutine(jumpWait());
@@ -118,8 +124,6 @@ public class Player : MonoBehaviour
         else if((rb.velocity.y <= 2 || touchingGround) && animator.GetBool("Falling"))
         {
             animator.SetBool("Falling", false);
-            animator.SetBool("Land", true);
-            StartCoroutine(landedCoroutine());
         }
     }
 
@@ -130,19 +134,15 @@ public class Player : MonoBehaviour
         return health;
     }
 
-    public IEnumerator landedCoroutine()
-    {
-        yield return new WaitForSeconds(1);
-        animator.SetBool("Land", false);
-    }
-
     public IEnumerator jumpWait()
     {
         yield return new WaitForSeconds(jumpCooldown);
         isJumping = false;
     }
+    #endregion
 
-    public IEnumerator dashWait()
+    #region More code I may use in the future
+    /*public IEnumerator dashWait()
     {
         yield return new WaitForSeconds(dashCooldown);
         rb.gravityScale = 3;
@@ -165,7 +165,6 @@ public class Player : MonoBehaviour
         }
     }
 
-    /*
     Vector2 mouseDirection = (mousePos - new Vector2(transform.position.x, transform.position.y)).normalized;
     rb.AddRelativeForce(Quaternion.AngleAxis(Mathf.Atan2(mouseDirection.y, mouseDirection.x) * Mathf.Rad2Deg, Vector3.forward) * Vector3.right * dashSpeed, ForceMode2D.Impulse);
 
@@ -174,4 +173,5 @@ public class Player : MonoBehaviour
     Vector2 mouseDirection = (mousePos - new Vector2(transform.position.x, transform.position.y)).normalized;
     rb.AddRelativeForce(Quaternion.AngleAxis(Mathf.Atan2(mouseDirection.y, mouseDirection.x) * Mathf.Rad2Deg, Vector3.forward) * Vector3.right * dashSpeed, ForceMode2D.Impulse);
     */
+    #endregion
 }

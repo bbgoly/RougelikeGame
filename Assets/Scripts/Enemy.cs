@@ -2,46 +2,55 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Enemy : MonoBehaviour
+public abstract class Enemy : MonoBehaviour
 {
+    #region Public Properties
     public string enemyName;
-    public int maxHealth = 100;
-    public float currentHealth = 100;
-    public float aggroRange = 20;
-    public float attackRange = 5;
-    public float attackCooldown = 0.5f;
-    public float enemyDamage = 10;
+    public float maxHealth, currentHealth, aggroRange, attackRange, attackCooldown, enemyDamage, enemyWalkSpeed;
+
+    public Transform player;
+    public Animator animator;
+    public BoxCollider2D c2d;
     public GameObject deathEffect;
-    
-    private GameObject player;
+
+    public bool inRange
+    {
+        get
+        {
+            return Vector2.Distance(transform.position, player.position) < aggroRange;
+        }
+    }
+
+    public bool canAttack
+    {
+        get
+        {
+            return Vector2.Distance(transform.position, player.position) < attackRange;
+        }
+    }
+    #endregion
+
+    #region Private Properties
+    private Vector3 currentVelocity;
     private SpriteRenderer spriteRenderer;
-    private Animator animator;
+    #endregion
 
-    private bool inRange
-    {
-        get
-        {
-            return Vector2.Distance(transform.position, player.transform.position) < aggroRange;
-        }
-    }
-
-    private bool canAttack
-    {
-        get
-        {
-            return Vector2.Distance(transform.position, player.transform.position) < attackRange;
-        }
-    }
-
+    #region Main enemy code
     private void Awake()
     {
-        player = GameObject.FindGameObjectWithTag("Player");
-        spriteRenderer = GetComponent<SpriteRenderer>();
-        animator = GetComponent<Animator>();
         currentHealth = maxHealth;
+        animator = GetComponent<Animator>();
+        c2d = GetComponent<BoxCollider2D>();
+        spriteRenderer = GetComponent<SpriteRenderer>();
     }
 
-    public void TakeDamage(float damage)
+    public virtual void Attack()
+    {
+        animator.SetFloat("WalkSpeed", 0.1f);
+        StartCoroutine(AttackCoroutine());
+    }
+
+    public virtual void TakeDamage(float damage)
     {
         currentHealth -= Mathf.Min(damage, currentHealth);
         Debug.Log($"{enemyName} took {System.Math.Round((decimal)damage, 2)} damage!");
@@ -53,34 +62,32 @@ public class Enemy : MonoBehaviour
         }
     }
 
-    private void Update()
-    {
-        if (canAttack && !animator.GetBool("Attacking"))
-        {
-            Player.DamagePlayer(enemyDamage);
-            animator.SetBool("Attacking", true);
-            StartCoroutine(AttackCoroutine());
-        }
-    }
-
-    private IEnumerator AttackCoroutine()
+    public virtual IEnumerator AttackCoroutine()
     {
         yield return new WaitForSeconds(1.5f + attackCooldown);
-        Debug.Log("uwu");
-        animator.SetBool("Attacking", false);
     }
 
     private void FixedUpdate()
     {
         if (!TimeManager.Rewinding && !inRange && !canAttack)
         {
-            transform.position = new Vector3(transform.position.x + Mathf.Sin(Time.fixedTime) / 8, transform.position.y);
+            transform.position = Vector3.SmoothDamp(transform.position, new Vector3(transform.position.x + Mathf.Sin(Time.fixedTime), transform.position.y), ref currentVelocity, enemyWalkSpeed + 0.3f);
+            animator.SetFloat("WalkSpeed", 0.5f);
         }
         else if (!TimeManager.Rewinding && inRange && !canAttack)
         {
-            transform.position = new Vector3(Vector3.MoveTowards(transform.position, player.transform.position, 0.1f).x, transform.position.y);
+            transform.position = Vector3.SmoothDamp(transform.position, new Vector3(Vector3.MoveTowards(transform.position, player.position, enemyWalkSpeed).x, transform.position.y), ref currentVelocity, 0.05f); 
+            animator.SetFloat("WalkSpeed", 1);
         }
-        animator.SetFloat("EnemySpeed", !animator.GetBool("Attacking") ? 1 : 0);
-        spriteRenderer.flipX = (player.transform.position.x - transform.position.x) < 0;
+        spriteRenderer.flipX = (inRange && (player.position.x - transform.position.x) < 0) || Mathf.Sin(Time.fixedTime) < 0;
     }
+
+    private void Update()
+    {
+        if (canAttack && !animator.GetBool("Attacking"))
+        {
+            Attack();
+        }
+    }
+    #endregion
 }
