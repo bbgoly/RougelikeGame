@@ -73,6 +73,7 @@ public abstract class Enemy : MonoBehaviour
         {
             transform.position = Vector3.SmoothDamp(transform.position, new Vector3(transform.position.x + Mathf.Sin(Time.fixedTime), transform.position.y), ref currentVelocity, enemyWalkSpeed + 0.3f);
             animator.SetFloat("WalkSpeed", 0.5f);
+            c2d.size = new Vector2(c2d.size.x, 0.456343f); 0.370806;
         }
         else if (!TimeManager.Rewinding && inRange && !canAttack)
         {

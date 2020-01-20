@@ -10,10 +10,10 @@ GameObject:
   m_Component:
   - component: {fileID: 4125297013417134874}
   - component: {fileID: 4125297013417134853}
-  - component: {fileID: 4125297013417134852}
   - component: {fileID: 4125297013417134855}
   - component: {fileID: 4125297013417134854}
   - component: {fileID: 4125297013417134849}
+  - component: {fileID: 4178386059305737414}
   m_Layer: 0
   m_Name: Skeleton
   m_TagString: Untagged
@@ -85,26 +85,6 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
---- !u!114 &4125297013417134852
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4125297013417134848}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: e97177cacdd00204d994178d1f42b48f, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  enemyName: Skeleton
-  maxHealth: 100
-  currentHealth: 100
-  aggroRange: 20
-  attackRange: 2
-  attackCooldown: 0.5
-  enemyDamage: 10
-  deathEffect: {fileID: 0}
 --- !u!50 &4125297013417134855
 Rigidbody2D:
   serializedVersion: 4
@@ -133,7 +113,7 @@ BoxCollider2D:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 4125297013417134848}
-  m_Enabled: 1
+  m_Enabled: 0
   m_Density: 1
   m_Material: {fileID: 0}
   m_IsTrigger: 0
@@ -171,3 +151,28 @@ Animator:
   m_HasTransformHierarchy: 1
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorControllerStateOnDisable: 0
+--- !u!114 &4178386059305737414
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4125297013417134848}
+  m_Enabled: 0
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 826f52a4e148c6a4b96ac390cdd9fe56, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  enemyName: Assault Rifle Gangster
+  maxHealth: 100
+  currentHealth: 100
+  aggroRange: 20
+  attackRange: 5
+  attackCooldown: 0.8
+  enemyDamage: 15
+  enemyWalkSpeed: 0.3
+  player: {fileID: 0}
+  animator: {fileID: 4125297013417134849}
+  c2d: {fileID: 0}
+  deathEffect: {fileID: 9162854696483086870, guid: 706ea7cc9a26bca47a4b64bdda578faf,
+    type: 3}

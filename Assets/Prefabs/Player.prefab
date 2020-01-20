@@ -140,30 +140,27 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 7359445912698232868}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: d5868506740b3b341bf9555e3f9d4859, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   maxHealth: 100
   moveSpeed: 5
-  maxTimeLimit: 4
-  dashSpeed: 50
-  dashDamage: 15
-  dashCooldown: 0.8
-  teleportMaxDistance: 10
-  teleportDamage: 20
-  teleportCooldown: 1.5
-  jumpForce: 15
-  fallMultiplier: 2.25
-  lowJumpMultiplier: 1.5
-  maxExtraJumps: 1
-  jumpCooldown: 0.1
   groundMask:
     serializedVersion: 2
     m_Bits: 256
   groundCheckObject: {fileID: 923693330024413613}
+  maxExtraJumps: 1
+  jumpPower: 15
+  jumpCooldown: 0.1
+  fallMultiplier: 2.25
+  lowJumpMultiplier: 1.5
   groundCheckRadius: 0.5
+  dashSpeed: 50
+  dashCooldown: 0.8
+  maxTimeLimit: 4
+  slowMotionSpeed: 1.25
 --- !u!95 &283769716
 Animator:
   serializedVersion: 3
