@@ -4,16 +4,19 @@ using UnityEngine;
 
 public abstract class Enemy : MonoBehaviour
 {
-    #region Public Properties
+    #region Public & Protected Fields & Properties
+    [Header("Enemy Properties")]
     public string enemyName;
     public float maxHealth, currentHealth, aggroRange, attackRange, attackCooldown, enemyDamage, enemyWalkSpeed;
 
-    public Transform player;
-    public Animator animator;
-    public BoxCollider2D c2d;
+    [Header("Necessary Components/Prefabs")]
     public GameObject deathEffect;
 
-    public bool inRange
+    protected Transform player;
+    protected Animator animator;
+    protected Rigidbody2D rb2d;
+
+    protected bool inRange
     {
         get
         {
@@ -21,18 +24,18 @@ public abstract class Enemy : MonoBehaviour
         }
     }
 
-    public bool canAttack
+    protected bool canAttack
     {
         get
         {
-            return Vector2.Distance(transform.position, player.position) < attackRange;
+            return inRange && Vector2.Distance(transform.position, player.position) < attackRange;
         }
     }
     #endregion
 
-    #region Private Properties
-    private Vector3 currentVelocity;
+    #region Private Fields
     private SpriteRenderer spriteRenderer;
+    private float attackTime;
     #endregion
 
     #region Main enemy code
@@ -40,15 +43,32 @@ public abstract class Enemy : MonoBehaviour
     {
         currentHealth = maxHealth;
         animator = GetComponent<Animator>();
-        c2d = GetComponent<BoxCollider2D>();
+        rb2d = GetComponent<Rigidbody2D>();
+        player = FindObjectOfType<Player>().transform;
         spriteRenderer = GetComponent<SpriteRenderer>();
     }
 
-    public virtual void Attack()
+    private void Update()
     {
-        animator.SetFloat("WalkSpeed", 0.1f);
-        StartCoroutine(AttackCoroutine());
+        if (!animator.GetBool("EnemyMoving") && attackTime >= attackCooldown && canAttack)
+        {
+            Attack();
+            attackTime = 0;
+        }
+        attackTime += Time.deltaTime;
     }
+
+    protected virtual void FixedUpdate()
+    {
+        Vector2 playerDirection = transform.position - player.position;
+        float rotationAngle = Mathf.Atan2(playerDirection.y, playerDirection.x) * Mathf.Rad2Deg + 180f;
+        spriteRenderer.flipX = !inRange && Mathf.Sin(Time.fixedTime) < 0;
+        spriteRenderer.flipY = inRange && rotationAngle > 90 && rotationAngle < 270;
+        rb2d.rotation = inRange ? rotationAngle : 0;
+        animator.SetBool("EnemyMoving", !canAttack);
+    }
+
+    public abstract void Attack();
 
     public virtual void TakeDamage(float damage)
     {
@@ -59,35 +79,6 @@ public abstract class Enemy : MonoBehaviour
             Debug.LogWarning($"{enemyName} died!");
             Instantiate(deathEffect, transform.position, Quaternion.identity);
             Destroy(gameObject);
-        }
-    }
-
-    public virtual IEnumerator AttackCoroutine()
-    {
-        yield return new WaitForSeconds(1.5f + attackCooldown);
-    }
-
-    private void FixedUpdate()
-    {
-        if (!TimeManager.Rewinding && !inRange && !canAttack)
-        {
-            transform.position = Vector3.SmoothDamp(transform.position, new Vector3(transform.position.x + Mathf.Sin(Time.fixedTime), transform.position.y), ref currentVelocity, enemyWalkSpeed + 0.3f);
-            animator.SetFloat("WalkSpeed", 0.5f);
-            c2d.size = new Vector2(c2d.size.x, 0.456343f); 0.370806;
-        }
-        else if (!TimeManager.Rewinding && inRange && !canAttack)
-        {
-            transform.position = Vector3.SmoothDamp(transform.position, new Vector3(Vector3.MoveTowards(transform.position, player.position, enemyWalkSpeed).x, transform.position.y), ref currentVelocity, 0.05f); 
-            animator.SetFloat("WalkSpeed", 1);
-        }
-        spriteRenderer.flipX = (inRange && (player.position.x - transform.position.x) < 0) || Mathf.Sin(Time.fixedTime) < 0;
-    }
-
-    private void Update()
-    {
-        if (canAttack && !animator.GetBool("Attacking"))
-        {
-            Attack();
         }
     }
     #endregion

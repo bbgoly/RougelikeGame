@@ -8,6 +8,7 @@ public class TimeManager : MonoBehaviour
     #region Public Properties
     public static Dictionary<GameObject, Stack<ObjectInfo>> rewindObjects = new Dictionary<GameObject, Stack<ObjectInfo>>();
     public static bool Rewinding = false;
+    public static bool SlowMo = false;
     #endregion
 
     #region Private Properties
@@ -85,20 +86,6 @@ public class TimeManager : MonoBehaviour
         {
             StopRewinding();
         }
-    }
-
-    public static void ChangeTimeFlow(Rigidbody2D rb2D, float endTime, float timeStep = -0.1f)
-    {
-        Debug.Log("uwu");
-        Rewinding = true;
-        rb2D.interpolation = RigidbodyInterpolation2D.Interpolate;
-        for (float i = Time.timeScale; i < endTime; i += timeStep)
-        {
-            Time.timeScale = (float)System.Math.Round((decimal)i, 1);
-            Time.fixedDeltaTime = 0.02f * Time.timeScale;
-        }
-        rb2D.interpolation = RigidbodyInterpolation2D.None;
-        Rewinding = false;
     }
 
     public static void RewindTime() //Probably rewind the time GUI as well?

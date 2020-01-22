@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 
 public class AudioManager : MonoBehaviour
@@ -7,21 +8,13 @@ public class AudioManager : MonoBehaviour
     public List<Audio> audioList;
     #endregion
 
+    #region Private Properties
+    private static Audio currentRotatingAudio;
+    #endregion
+
     #region Main code
     private void Awake()
     {
-        #region Unused code
-        /*
-        public static AudioManager audioManager;
-        if(audioManager)
-        {
-            Destroy(gameObject);
-        }
-        audioManager = this;
-        DontDestroyOnLoad(gameObject);
-        */
-        #endregion
-
         foreach (Audio audio in audioList)
         {
             audio.audioSource = gameObject.AddComponent<AudioSource>();
@@ -32,17 +25,27 @@ public class AudioManager : MonoBehaviour
         }
     }
 
-    public static Audio PlayAudio(string audioName, float startTime = 0)
+    private void Update()
     {
-        Audio audio = GameObject.FindGameObjectWithTag("AudioManager").GetComponent<AudioManager>().audioList.Find(targetAudio => targetAudio.audioName == audioName);
+        if (currentRotatingAudio == null || !currentRotatingAudio.audioSource.isPlaying)
+        {
+            currentRotatingAudio = audioList[Random.Range(0, audioList.Count - 1)];
+            currentRotatingAudio.audioSource.Play();
+        }
+    }
+
+    public static Audio PlayAudio(string audioName, bool loopAudio = false, float startTime = 0)
+    {
+        Audio audio = FindObjectOfType<AudioManager>().audioList.Find(targetAudio => targetAudio.audioName == audioName);
         audio.audioSource.time = startTime;
+        audio.audioSource.loop = loopAudio;
         audio.audioSource.Play();
         return audio;
     }
 
     public static void StopAudio(string audioName)
     {
-        GameObject.FindGameObjectWithTag("AudioManager").GetComponent<AudioManager>().audioList.Find(targetAudio => targetAudio.audioName == audioName).audioSource.Stop();
+        FindObjectOfType<AudioManager>().audioList.Find(targetAudio => targetAudio.audioName == audioName).audioSource.Stop();
     }
     #endregion
 }
@@ -62,3 +65,27 @@ public class Audio
     [Range(0, 3)]
     public float audioPitch;
 }
+
+#region Unused code
+/*
+public static AudioManager audioManager;
+if(audioManager)
+{
+    Destroy(gameObject);
+}
+audioManager = this;
+DontDestroyOnLoad(gameObject);
+
+public void PlayList(List<string> audioNames, params float[] startTimes)
+{
+    foreach (Audio audio in FindObjectOfType<AudioManager>().audioList)
+    {
+        if (audioNames.Contains(audio.audioName))
+        {
+            audio.audioSource.time = startTimes.Length > 0 ? startTimes[audioNames.FindIndex(_audioName => _audioName == audio.audioName)] : 0;
+            audio.audioSource.Play();
+        }
+    }
+}
+*/
+#endregion
