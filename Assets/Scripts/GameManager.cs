@@ -11,7 +11,7 @@ public class GameManager : MonoBehaviour
     public GameObject bigDemonPrefab, smallDemonPrefab, bigZombiePrefab, smallZombiePrefab;
     [Header("Dungeon Prefabs")]
     public List<GameObject> floorTiles;
-    public GameObject topCorner, bottomCorner, verticalWall, horizontalWall;
+    public GameObject wallPrefab;
 
 
     private int currentDifficulty = 0;
@@ -21,12 +21,11 @@ public class GameManager : MonoBehaviour
 
     private void Start()
     {
-        GenerateDungeon(Random.Range(1, 4), Random.Range(1, 4));
+        GenerateDungeon(Random.Range(2, 4), Random.Range(2, 4));
     }
 
     private void Update()
     {
-
     }
 
     private void GenerateDungeon(int width, int height)
@@ -36,13 +35,16 @@ public class GameManager : MonoBehaviour
             for (float y = 0; y <= height; y += 0.15f)
             {
                 Vector2 tilePosition = new Vector2(x - 1, y);
-                GameObject floorTile = Instantiate(floorTiles[Random.Range(0, floorTiles.Count)], tilePosition, Quaternion.identity);
-				floorGrid.Add(tilePosition);
-				if (x >= width || y >= height)
+				if (x == 0)
 				{
-					GameObject wallTile = Instantiate(wallPrefab, tilePosition, Quaternion.Eular(0, 0, x >= width ? 90 : 0));
-					wallTile.Add(tilePosition);
+					GameObject wallTile = Instantiate(wallPrefab, tilePosition, Quaternion.Euler(0, 0, x >= width ? 90 : 0));
+					wallGrid.Add(tilePosition);
 				}
+                else
+                {
+                    GameObject floorTile = Instantiate(floorTiles[Random.Range(0, floorTiles.Count)], tilePosition, Quaternion.identity);
+                    floorGrid.Add(tilePosition);
+                }
             }
         }
     }

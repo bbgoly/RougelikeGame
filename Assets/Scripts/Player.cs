@@ -123,7 +123,6 @@ public class Player : MonoBehaviour
         Vector2 mouseDirection = transform.position - Camera.main.ScreenToWorldPoint(Input.mousePosition);
         float rotationAngle = Mathf.Atan2(mouseDirection.y, mouseDirection.x) * Mathf.Rad2Deg + 180f;
         rb2d.velocity = stunned ? Vector2.zero : dashing ? -mouseDirection * dashMultiplier : new Vector2(inputX, inputY) * moveSpeed;
-        print(stunned);
         spriteRenderer.flipY = rotationAngle > 90 && rotationAngle < 270;
         rb2d.rotation = rotationAngle;
     }
