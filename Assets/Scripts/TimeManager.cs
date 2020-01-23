@@ -15,37 +15,7 @@ public class TimeManager : MonoBehaviour
     private static bool isDone = false;
     #endregion
 
-    #region Unused code
-    /*
-    void Update()
-    {
-        Rewinding = Input.GetKey(KeyCode.Return);
-        rb2D.isKinematic = Rewinding; //There's a nice bug where if player tries to move/jump while rewinding they will be able to fuck with the rewind and phase through colliders cuz rb is Kinematic
-        if (Input.GetKeyDown(KeyCode.Escape))
-            ChangeTimeFlow(Time.timeScale == 0 ? 1 : 0);
-        else if (Input.GetKey(KeyCode.LeftShift))
-            ChangeTimeFlow(0.5f);
-        else if (Input.GetKey(KeyCode.Q))
-            ChangeTimeFlow(2, 0.1f);
-        if 
-    }
-    */
-    #endregion
-
     #region Main code
-    private void Awake()
-    {
-        rewindObjects.Clear();
-        foreach (GameObject gameObject in SceneManager.GetActiveScene().GetRootGameObjects())
-        {
-            if (gameObject.layer == 9 || gameObject.layer == 10)
-            {
-                rewindObjects.Add(gameObject, new Stack<ObjectInfo>());
-            }
-        }
-//        rewindObjects.OrderBy(obj => obj.Key);
-    }
-
     private void LateUpdate()
     {
         foreach (GameObject currentGameObject in rewindObjects.Keys)
@@ -68,17 +38,30 @@ public class TimeManager : MonoBehaviour
                 isDone = keyValuePair.Value.Count == 0;
                 if (!isDone)
                 {
+                    GameObject targetObject = keyValuePair.Key;
+                    Rigidbody2D rb2D = targetObject.GetComponent<Rigidbody2D>();
                     ObjectInfo objectInfo = keyValuePair.Value.Pop();
-                    Rigidbody2D rb2D = keyValuePair.Key.GetComponent<Rigidbody2D>();
+                    targetObject.SetActive(true);
 
                     rb2D.isKinematic = true;
                     rb2D.velocity = objectInfo.velocity;
                     rb2D.angularVelocity = objectInfo.angularVelocity;
                     rb2D.interpolation = RigidbodyInterpolation2D.Interpolate;
 
-                    keyValuePair.Key.transform.position = objectInfo.objectPosition;
-                    keyValuePair.Key.transform.rotation = objectInfo.objectRotation;
-                    keyValuePair.Key.transform.localScale = objectInfo.localScale;
+                    targetObject.transform.position = objectInfo.objectPosition;
+                    targetObject.transform.rotation = objectInfo.objectRotation;
+                    targetObject.transform.localScale = objectInfo.localScale;
+
+                    Player player = targetObject.GetComponent<Player>();
+                    Enemy enemy = targetObject.GetComponent<Enemy>();
+                    if (player)
+                    {
+                        player.health = player.maxHealth;
+                    }
+                    else if(enemy)
+                    {
+                        enemy.currentHealth = enemy.maxHealth;
+                    }
                 }
             }
         }
@@ -88,10 +71,11 @@ public class TimeManager : MonoBehaviour
         }
     }
 
-    public static void RewindTime() //Probably rewind the time GUI as well?
+    public static void RewindTime()
     {
-        //AudioManager.PlayAudio("RewindTime", 2.4f);
-        Time.timeScale = 3;
+        Time.timeScale = 9;
+        Rigidbody2D playerRB2D = FindObjectOfType<Player>().GetComponent<Rigidbody2D>();
+        playerRB2D.velocity = Vector2.zero;
         Rewinding = true;
         isDone = false;
     }
@@ -103,7 +87,7 @@ public class TimeManager : MonoBehaviour
             Rigidbody2D rb2D = objectInfos.Key.GetComponent<Rigidbody2D>();
             rb2D.interpolation = RigidbodyInterpolation2D.None;
             rb2D.isKinematic = false;
-            //objectInfos.Value.Clear();
+            objectInfos.Value.Clear();
         }
         Rewinding = false;
         isDone = false;

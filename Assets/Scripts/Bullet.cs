@@ -4,16 +4,25 @@ using UnityEngine;
 
 public class Bullet : MonoBehaviour
 {
+    public static Player player;
     public Enemy enemy;
+
     private void OnTriggerEnter2D(Collider2D collision)
     {
-        Player player = collision.GetComponent<Player>();
-        if (player)
+        Player hitPlayer = collision.GetComponent<Player>();
+        Enemy hitEnemy = collision.GetComponent<Enemy>();
+        print(hitEnemy);
+        if (!enemy && hitEnemy)
         {
-            Player.DamagePlayer(enemy);
+            hitEnemy.TakeDamage(player.attackDamage);
+        }
+        else if (enemy && hitPlayer)
+        {
+            player.DamagePlayer(enemy);
         }
 
-        if (collision.gameObject.layer != 0 && collision.gameObject.layer != 9)
+
+        if (collision.gameObject.layer != 0 && (!enemy && collision.gameObject.layer != 10 || enemy && collision.gameObject.layer != 9))
         {
             Destroy(gameObject);
         }

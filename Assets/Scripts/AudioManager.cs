@@ -29,7 +29,7 @@ public class AudioManager : MonoBehaviour
     {
         if (currentRotatingAudio == null || !currentRotatingAudio.audioSource.isPlaying)
         {
-            currentRotatingAudio = audioList[Random.Range(0, audioList.Count - 1)];
+            currentRotatingAudio = audioList[Random.Range(0, audioList.Count)];
             currentRotatingAudio.audioSource.Play();
         }
     }

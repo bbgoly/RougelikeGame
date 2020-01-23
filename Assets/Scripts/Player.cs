@@ -1,30 +1,33 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using TMPro;
 
 public class Player : MonoBehaviour
 {
     #region Public Fields
     [Header("Player Properties")]
     public GameObject ghostEffect;
-    public float maxHealth = 100f, moveSpeed = 5f;
-    public static bool stunned = false;
+    public float maxHealth = 100f, health = 100f, moveSpeed = 5f;
     [Header("Dash Properties")]
     public float dashMultiplier = 2f;
     public float dashCooldown = 0.4f, ghostLimit = 1f;
     [Header("Time Properties")]
     public float slowMotionCooldown = 2f;
-    public float slowMotionSpeed = 0.3f, rewindSpeed = 3f;
+    public float slowMotionSpeed = 0.3f;
+    [Header("Attack Properties")]
+    public GameObject bulletPrefab;
+    public float attackDamage = 18, attackCooldown = 0.6f, bulletSpeed = 5;
     #endregion
 
     #region Private Fields
     private Rigidbody2D rb2d;
     private Animator animator;
     private SpriteRenderer spriteRenderer;
+    private static TextMeshProUGUI centerText;
 
-    private float inputX, inputY, dashTime, slowMotionTime;
-    private static float health = 100f;
-    private bool dashing = false;
+    private float inputX, inputY, dashTime, slowMotionTime, attackTime;
+    private bool dashing = false, alive = true;
     #endregion
 
     #region Main Code
@@ -33,9 +36,11 @@ public class Player : MonoBehaviour
         health = maxHealth;
         dashTime = dashCooldown;
         slowMotionTime = slowMotionCooldown;
+        attackTime = attackCooldown;
         rb2d = GetComponent<Rigidbody2D>();
         animator = GetComponent<Animator>();
         spriteRenderer = GetComponent<SpriteRenderer>();
+        centerText = FindObjectOfType<Canvas>().GetComponentInChildren<TextMeshProUGUI>();
     }
 
     /// <summary> 
@@ -44,6 +49,9 @@ public class Player : MonoBehaviour
     /// animator.SetFloat(...): Basically sets a float to the PlayerSpeed animation parameter. If the parameter is greater than 0.1f then the animation will play. 
     /// Since InputX and InputY's value work in the same sense as a cartesian plane (left is -1 for inputX, up is 1 for inputY), I decided to add both their absolute values together </para>
     /// <para> 
+    /// animator.SetBool(...): If the player can either dash or slow time, then play the animation that lets the player know a ability is ready
+    /// </para>
+    /// <para>
     /// dashTime: If the player presses the LeftShift key, and the time since the last dash (dashTime) is greater than the dashCooldown value then reset the dashTime variable,
     /// else add onto the dashTime variable using the time in seconds since the last frame (Time.deltaTime)
     /// </para>
@@ -52,7 +60,7 @@ public class Player : MonoBehaviour
     /// use the remaining time to act as a cooldown.
     /// </para>
     /// <para>
-    /// if statement: If the player is dashing, or the player is in slow motion and the dashTime or slowMotionTime is within the portion of the cooldown where the player can dash or be in slow motion,
+    /// if statement: If the player is alive and is dashing or in slow motion and the dashTime or slowMotionTime is within the portion of the cooldown where the player can dash or be in slow motion,
     /// then call the CreateGhosts method <see cref="CreateGhosts"/>.
     /// if statement 2: The reason why I create a new if statement with the same conditions without the CreateGhosts method is so I don't have any weird conflicts where the player will have two times the
     /// ghosts spawning if the player is BOTH dashing and in slow motion (because I was originally going to have two seperate if statements both with the CreateGhosts method, but I figured it would
@@ -78,31 +86,31 @@ public class Player : MonoBehaviour
         //Time.timeScale = TimeManager.SlowMo && slowMotionTime < slowMotionCooldown - 1.2f ? slowMotionSpeed : (TimeManager.Rewinding ? rewindSpeed : 1);
         //slowMotionTime += TimeManager.SlowMo && slowMotionTime > slowMotionCooldown ? -slowMotionTime : Time.deltaTime;
 
-        if (dashing && dashTime < dashCooldown - dashEndTime || TimeManager.SlowMo && slowMotionTime < slowMotionCooldown - slowMotionEndTime)
+        if (alive && (dashing && dashTime < dashCooldown - dashEndTime || TimeManager.SlowMo && slowMotionTime < slowMotionCooldown - slowMotionEndTime))
         {
             CreateGhosts();
         }
 
-        if (!TimeManager.Rewinding && Input.GetKeyDown(KeyCode.Q) && slowMotionTime > slowMotionCooldown)
+        if (!TimeManager.Rewinding && Input.GetKeyDown(KeyCode.Q) && alive && slowMotionTime > slowMotionCooldown)
         {
             TimeManager.SlowMo = true;
             Time.timeScale = slowMotionSpeed;
             rb2d.interpolation = RigidbodyInterpolation2D.Interpolate;
             slowMotionTime = 0;
         }
-        else if (TimeManager.SlowMo && (Input.GetKeyUp(KeyCode.Q) || TimeManager.Rewinding || slowMotionTime > slowMotionCooldown - slowMotionEndTime))
+        else if (!TimeManager.Rewinding && TimeManager.SlowMo && alive && (Input.GetKeyUp(KeyCode.Q) || TimeManager.Rewinding || slowMotionTime > slowMotionCooldown - slowMotionEndTime))
         {
+            Time.timeScale = 1;
             TimeManager.SlowMo = false;
-            Time.timeScale = TimeManager.Rewinding ? rewindSpeed : 1;
             rb2d.interpolation = RigidbodyInterpolation2D.None;
         }
-        print(animator.GetBool("PlayerAbilityReady"));
     }
 
     /// <summary> 
     /// FixedUpdate method to handle everything physics related
     /// <para> 
-    /// mouseDirection: Creates a new Vector2 that points in the direction of the mouse's world space position </para>
+    /// mouseDirection: Creates a new Vector2 that points in the direction of the mouse's world space position
+    /// </para>
     /// <para>
     /// rotationAngle: Gets the angle from the player's position to the mouse's world space position, converts it into degrees (since Mathf.Atan2 returns radians, and Rigidbody2D's rotation property
     /// only accepts degrees), and flips it by 180 degrees to have the player correctly face the mouse.
@@ -117,14 +125,30 @@ public class Player : MonoBehaviour
     /// <para>
     /// rotation: Sets the rotation of the player's Rigidbody2D component to the rotationAngle variable (see above)
     /// </para>
+    /// <para>
+    /// if statement: If the player left clicks then shoot a bullet in the direction the sprite is facing for 3 seconds.
+    /// </para>
     /// </summary>
     private void FixedUpdate()
     {
-        Vector2 mouseDirection = transform.position - Camera.main.ScreenToWorldPoint(Input.mousePosition);
-        float rotationAngle = Mathf.Atan2(mouseDirection.y, mouseDirection.x) * Mathf.Rad2Deg + 180f;
-        rb2d.velocity = stunned ? Vector2.zero : dashing ? -mouseDirection * dashMultiplier : new Vector2(inputX, inputY) * moveSpeed;
-        spriteRenderer.flipY = rotationAngle > 90 && rotationAngle < 270;
-        rb2d.rotation = rotationAngle;
+        if (alive)
+        {
+            Vector2 mouseDirection = transform.position - Camera.main.ScreenToWorldPoint(Input.mousePosition);
+            float rotationAngle = Mathf.Atan2(mouseDirection.y, mouseDirection.x) * Mathf.Rad2Deg + 180f;
+            rb2d.velocity = dashing ? -mouseDirection * dashMultiplier : new Vector2(inputX, inputY) * moveSpeed;
+            spriteRenderer.flipY = rotationAngle > 90 && rotationAngle < 270;
+            rb2d.rotation = rotationAngle;
+            rb2d.drag = 0f;
+
+            if (Input.GetButtonDown("Fire1") && attackTime >= attackCooldown)
+            {
+                GameObject bullet = Instantiate(bulletPrefab, transform.position, transform.rotation);
+                bullet.GetComponent<Rigidbody2D>().velocity = transform.right * bulletSpeed;
+                Destroy(bullet, 3f);
+                attackTime = 0;
+            }
+            attackTime += Time.deltaTime;
+        }
     }
 
     /// <summary>
@@ -146,17 +170,49 @@ public class Player : MonoBehaviour
         Destroy(ghost, ghostLimit);
     }
 
-    public static void DamagePlayer(Enemy enemy)
+    /// <summary>
+    /// Method to deal damage to the player
+    /// <para>
+    /// health: Subtracts the player's health by the either the enemy's damage value or the players health depending on which is smaller. The reason why I do this is to prevent the player's health from falling
+    /// below zero without any absolute values.
+    /// </para>
+    /// <para>
+    /// if statement: if the player is dying then start a coroutine <see cref="Countdown"/>
+    /// </para>
+    /// </summary>
+    /// <param name="enemy">The enemy that hit the player</param>
+    public void DamagePlayer(Enemy enemy)
     {
         float enemyDamage = enemy.enemyDamage + Random.Range(-2, 2);
         health -= Mathf.Min(enemyDamage, health);
         //Debug.Log($"Player took {System.Math.Round((decimal)enemyDamage, 2)} damage from {enemy.enemyName}! Player has {health} health remaining!");
-        if (health <= 0)
+        if (alive && health <= 0)
         {
-            //Debug.Log($"Player died to {enemy.enemyName}");
-            //Instantiate(deathEffect, FindObjectOfType<Player>().transform.position, Quaternion.identity);
-            //Destroy(gameObject);
+            StartCoroutine(Countdown());
+            alive = false;
         }
+    }
+
+    /// <summary>
+    /// Calls the rewind time function then resets the player's health
+    /// </summary>
+    /// <para>
+    /// for loop: countdown using rich text formatting
+    /// </para>
+    /// <returns></returns>
+    private IEnumerator Countdown()
+    {
+        Time.timeScale = 1;
+        for (int time = 5; time >= 0; time--)
+        {
+            centerText.text = $"<size=72><color=#8b0000>You died</color></size>\n<size=42>You will respawn in {time} seconds</size>";
+            yield return new WaitForSeconds(1);
+        }
+        centerText.text = "";
+        TimeManager.RewindTime();
+        yield return new WaitUntil(() => !TimeManager.Rewinding);
+        health = maxHealth;
+        alive = true;
     }
     #endregion
 }

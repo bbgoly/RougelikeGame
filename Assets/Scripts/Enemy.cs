@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 public abstract class Enemy : MonoBehaviour
@@ -8,9 +9,6 @@ public abstract class Enemy : MonoBehaviour
     [Header("Enemy Properties")]
     public string enemyName;
     public float maxHealth, currentHealth, aggroRange, attackRange, attackCooldown, enemyDamage, enemyWalkSpeed;
-
-    [Header("Necessary Components/Prefabs")]
-    public GameObject deathEffect;
 
     protected Transform player;
     protected Animator animator;
@@ -50,7 +48,7 @@ public abstract class Enemy : MonoBehaviour
 
     private void Update()
     {
-        if (!animator.GetBool("EnemyMoving") && attackTime >= attackCooldown && canAttack)
+        if (!TimeManager.Rewinding && !animator.GetBool("EnemyMoving") && attackTime >= attackCooldown && canAttack)
         {
             Attack();
             attackTime = 0;
@@ -60,12 +58,15 @@ public abstract class Enemy : MonoBehaviour
 
     protected virtual void FixedUpdate()
     {
-        Vector2 playerDirection = transform.position - player.position;
-        float rotationAngle = Mathf.Atan2(playerDirection.y, playerDirection.x) * Mathf.Rad2Deg + 180f;
-        spriteRenderer.flipX = !inRange && Mathf.Sin(Time.fixedTime) < 0;
-        spriteRenderer.flipY = inRange && rotationAngle > 90 && rotationAngle < 270;
-        rb2d.rotation = inRange ? rotationAngle : 0;
-        animator.SetBool("EnemyMoving", !canAttack);
+        if (!TimeManager.Rewinding)
+        {
+            Vector2 playerDirection = transform.position - player.position;
+            float rotationAngle = Mathf.Atan2(playerDirection.y, playerDirection.x) * Mathf.Rad2Deg + 180f;
+            spriteRenderer.flipX = !inRange && Mathf.Sin(Time.fixedTime) < 0;
+            spriteRenderer.flipY = inRange && rotationAngle > 90 && rotationAngle < 270;
+            rb2d.rotation = inRange ? rotationAngle : 0;
+            animator.SetBool("EnemyMoving", !canAttack);
+        }
     }
 
     public abstract void Attack();
@@ -76,9 +77,7 @@ public abstract class Enemy : MonoBehaviour
         Debug.Log($"{enemyName} took {System.Math.Round((decimal)damage, 2)} damage!");
         if (currentHealth <= 0)
         {
-            Debug.LogWarning($"{enemyName} died!");
-            Instantiate(deathEffect, transform.position, Quaternion.identity);
-            Destroy(gameObject);
+            gameObject.SetActive(false);
         }
     }
     #endregion
